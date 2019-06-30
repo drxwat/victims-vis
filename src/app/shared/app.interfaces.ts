@@ -4,7 +4,7 @@ export declare type CrimeType =
   'Кража' | 'Мошенничество' | 'Удаленное мошенничество' |
   'Прочее' | 'Недостаточно информации';
 
-declare type IntBool = 0 | 1;
+export declare type IntBool = 0 | 1;
 
 export interface DataEntity {
   crime_type: CrimeType,

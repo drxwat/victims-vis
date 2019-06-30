@@ -1,1 +1,1 @@
-<div #chart></div>
+<app-density-plot *ngIf="loaded$ | async" [dataVector]="age$ | async"></app-density-plot>

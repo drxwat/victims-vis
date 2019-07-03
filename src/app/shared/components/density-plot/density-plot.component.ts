@@ -15,7 +15,7 @@ declare type KernelDensityEstimator = (data: DataVector) => Density;
  * поднятие до текущего значения
  */
 const MARGIN = 50;
-const SIZE = { h: 500, w: 500 };
+const SIZE = { h: 300, w: 400 }; // TODO: remove
 const CURVE_CLASS = 'age-density-curve'; // TODO: make unique
 
 @Component({
@@ -27,12 +27,13 @@ const CURVE_CLASS = 'age-density-curve'; // TODO: make unique
 export class DensityPlotComponent implements AfterViewInit, OnChanges {
 
   @Input() dataVector: DataVector = [];
+  @Input() viewWidth: number;
+  @Input() viewHeight: number
 
   @ViewChild('plot', { read: ElementRef, static: false })
   private plotEl: ElementRef;
   private plotRoot: Selection<SVGGElement, unknown, null, undefined>;
   private plotCurve: any;
-  private plotCurveTransition: any;
 
   private scaleX: ScaleLinear<number, number>;
   private scaleY: ScaleLinear<number, number>;
@@ -103,10 +104,9 @@ export class DensityPlotComponent implements AfterViewInit, OnChanges {
 
   private initPlot() {
     this.plotRoot = select(this.plotEl.nativeElement)
-      .attr('width', SIZE.w + (2 * MARGIN))
-      .attr('height', SIZE.h + (2 * MARGIN))
+      .attr('viewBox', `0 0 ${SIZE.w + MARGIN} ${SIZE.h + MARGIN}`)
       .append('g')
-      .attr('transform', `translate(${MARGIN}, ${MARGIN})`);
+      .attr('transform', `translate(${MARGIN}, 0)`);
   }
 
   private initScaleX(data: DataVector) {
@@ -137,7 +137,7 @@ export class DensityPlotComponent implements AfterViewInit, OnChanges {
 
   private drawAxises() {
     this.plotRoot.append('g')
-      .attr('transform', `translate(0, ${SIZE.w})`)
+      .attr('transform', `translate(0, ${SIZE.h})`)
       .call(axisBottom(this.scaleX));
 
     this.plotRoot.append('g')
@@ -155,10 +155,9 @@ export class DensityPlotComponent implements AfterViewInit, OnChanges {
   }
 
   private drawCurve(density: Density) {
-    this.plotCurve.datum(density);
 
-    transition()
-      .select(`.${CURVE_CLASS}`)
+    transition.call(this.plotCurve.datum(density))
+      .select(() => this.plotCurve.node())
       .duration(700)
       .attr('d', line()
         .curve(curveBasis)

@@ -6,14 +6,10 @@ import { select, Selection } from 'd3-selection';
 import { curveBasis, line } from 'd3-shape';
 import { transition } from 'd3-transition';
 
-declare type DataVector = number[];
+export declare type DataVector = number[];
 declare type Density = number[][];
 declare type KernelDensityEstimator = (data: DataVector) => Density;
 
-/**
- * После получения данных сначала нарисовать линию вдоль X а затем анимировать
- * поднятие до текущего значения
- */
 const MARGIN = 50;
 
 @Component({
@@ -74,7 +70,6 @@ export class DensityPlotComponent implements AfterViewInit, OnChanges {
   }
 
   async ngAfterViewInit() {
-    console.log(this.componentEl);
     this.viewIsReady();
   }
 

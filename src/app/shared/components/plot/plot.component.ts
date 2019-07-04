@@ -24,7 +24,7 @@ export abstract class PlotComponent implements AfterViewInit, OnChanges {
     this.isReady = Promise.all([
       new Promise((res) => { this.dataIsReady = res }),
       new Promise((res) => { this.viewIsReady = res })
-    ]);
+    ]).then(() => this.isInitialized = true);
   }
 
   ngOnChanges(changes: SimpleChanges) {

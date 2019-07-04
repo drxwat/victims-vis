@@ -12,3 +12,5 @@ export interface DataEntity {
   resp_is_male: IntBool,
   resp_income?: string
 }
+export declare type DataGroupCount = [string, number];
+export declare type DataGroupsCount = DataGroupCount[];

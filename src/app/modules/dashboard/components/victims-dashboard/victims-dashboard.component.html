@@ -1,10 +1,16 @@
 <mat-grid-list cols="3" rowHeight="2:1">
   <mat-grid-tile>
-    <app-density-plot *ngIf="loaded$ | async" [dataVector]="age$ | async"></app-density-plot>
+    <div *ngIf="loaded$ | async" class="plot-wrapper">
+      <app-density-plot [dataVector]="age$ | async"></app-density-plot>
+    </div>
   </mat-grid-tile>
   <mat-grid-tile>
     <app-bar-plot *ngIf="loaded$ | async" [dataGroupsCount]="income$ | async"></app-bar-plot>
   </mat-grid-tile>
   <mat-grid-tile>3</mat-grid-tile>
-  <mat-grid-tile>4</mat-grid-tile>
+  <mat-grid-tile>
+    <div *ngIf="loaded$ | async" class="plot-wrapper">
+      <app-density-plot [dataVector]="age$ | async"></app-density-plot>
+    </div>
+  </mat-grid-tile>
 </mat-grid-list>

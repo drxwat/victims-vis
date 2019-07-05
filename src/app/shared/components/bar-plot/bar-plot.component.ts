@@ -29,7 +29,7 @@ export class BarPlotComponent extends PlotComponent {
       this.initPlot();
       this.initScales(this.dataGroupsCount);
       this.drawAxises();
-      this.initBars();
+      this.initBars(this.dataGroupsCount);
       this.drawBars(this.dataGroupsCount.map((d) => [d[0], 0]), 0);
       this.drawBars(this.dataGroupsCount, ANIMATION_DURATION);
     });
@@ -70,10 +70,24 @@ export class BarPlotComponent extends PlotComponent {
       .call(axisLeft(this.scaleY));
   }
 
-  private initBars() {
-    this.barsGroup = this.plotRoot.append('g');
-    this.barsGroup.on('mouseleave', this.onMouseLeave);
+  private initBars(data: DataGroupsCount) {
+    // creating bar with opacity to catch mouseleave correctly
+    // it should be wider & higher then bars in all dimentions
+    const xStart = this.scaleX(data[0][0]) as number;
+    const xEnd = this.scaleX.bandwidth() * (data.length + 1);
+    const margin = 20; // hack to catch mouseleave from broders of rect
+    this.plotRoot.append('rect')
+      .attr('x', xStart - margin)
+      .attr('y', 0 - margin)
+      .attr('width', xEnd + (2 * margin))
+      .attr('height', this.size.H + (2 * margin))
+      .attr('fill', 'none')
+      .attr('opacity', '.2')
+      .attr('visibility', 'visible')
+      .attr('pointer-events', 'visible')
+      .on('mouseleave', this.onMouseLeave.bind(this));
 
+    this.barsGroup = this.plotRoot.append('g');
   }
 
   private drawBars(data: DataGroupsCount, duration = 0) {
@@ -97,6 +111,8 @@ export class BarPlotComponent extends PlotComponent {
       .attr("width", this.scaleX.bandwidth())
       .attr("height", (d: DataGroupCount) => this.size.H - this.scaleY(d[1]))
       .attr("fill", "#20c997")
+      .attr('stroke', '#fff')
+      .attr('stroke-width', '3')
       .attr('opacity', '.8');
   }
 
@@ -107,7 +123,13 @@ export class BarPlotComponent extends PlotComponent {
   }
 
   private onMouseLeave(data: DataGroupCount, selectedIndex: number, nodes: SVGRectElement[]) {
-    console.log(event as Event);
-    selectAll('rect').style('opacity', 0.8);
+    const mouseEvent = event as MouseEvent;
+    if (
+      mouseEvent &&
+      mouseEvent.relatedTarget &&
+      (mouseEvent.relatedTarget as Element).nodeName !== 'rect'
+    ) {
+      this.barsGroup.selectAll('rect').style('opacity', 0.8);
+    }
   }
 }

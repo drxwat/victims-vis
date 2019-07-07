@@ -7,7 +7,7 @@ export abstract class PlotComponent implements AfterViewInit, OnChanges {
    * Plot properties
    */
   @ViewChild('plot', { read: ElementRef, static: false })
-  protected plotEl: ElementRef;
+  private plotEl: ElementRef;
   protected plotRoot: Selection<SVGGElement, unknown, null, undefined>;
 
   protected size: { W: number, H: number };
@@ -21,10 +21,7 @@ export abstract class PlotComponent implements AfterViewInit, OnChanges {
   private viewIsReady: () => void;
 
   constructor(
-    private componentEl: ElementRef,
-    private margin = 0,
-    private translate: { left: number, top: number }
-  ) {
+    private componentEl: ElementRef) {
     this.isReady = Promise.all([
       new Promise((res) => { this.dataIsReady = res }),
       new Promise((res) => { this.viewIsReady = res })
@@ -49,9 +46,7 @@ export abstract class PlotComponent implements AfterViewInit, OnChanges {
   protected initPlot() {
     const { W, H } = this.getSize();
     this.plotRoot = select(this.plotEl.nativeElement)
-      .attr('viewBox', `0 0 ${W + this.margin} ${H + this.margin}`)
-      .append('g')
-      .attr('transform', `translate(${this.translate.left}, ${this.translate.top})`);
+      .attr('viewBox', `0 0 ${W} ${H}`);
   }
 
   /**

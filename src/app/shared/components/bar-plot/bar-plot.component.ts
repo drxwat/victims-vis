@@ -19,10 +19,13 @@ export class BarPlotComponent extends PlotComponent {
   private scaleX: ScaleBand<string>;
   private scaleY: ScaleLinear<number, number>;
 
+  private axisXSize: DOMRect;
+  private axisYSize: DOMRect;
+
   private barsGroup: Selection<SVGGElement, unknown, null, undefined>;
 
   constructor(componentEl: ElementRef) {
-    super(componentEl, 50, { top: 0, left: 50 });
+    super(componentEl);
 
     this.isReady.then(() => {
       this.initPlot();
@@ -61,12 +64,21 @@ export class BarPlotComponent extends PlotComponent {
   }
 
   private drawAxises() {
-    this.plotRoot.append('g')
-      .attr('transform', `translate(0, ${this.size.H})`)
+    // X axis
+    const axisX = this.plotRoot.append('g')
       .call(axisBottom(this.scaleX));
 
-    this.plotRoot.append('g')
+    const axisY = this.plotRoot.append('g')
       .call(axisLeft(this.scaleY));
+
+    this.axisXSize = (axisX.node() as SVGGElement).getBBox();
+    this.axisYSize = (axisY.node() as SVGGElement).getBBox();
+
+    const yWidth = this.axisYSize.width;
+    const xHeight = this.axisXSize.height;
+
+    axisX.attr('transform', `translate(${yWidth}, ${this.size.H - xHeight})`);
+    axisY.attr('transform', `translate(${yWidth}, ${-xHeight})`);
   }
 
   private initBars(data: DataGroupsCount) {

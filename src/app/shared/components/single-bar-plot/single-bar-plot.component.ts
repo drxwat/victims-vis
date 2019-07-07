@@ -3,7 +3,7 @@ import { ANIMATION_DURATION } from '@shared/app.constants';
 import { DataBiGroupCount, DataGroupCount } from '@shared/app.interfaces';
 import { axisBottom } from 'd3-axis';
 import { ScaleLinear, scaleLinear } from 'd3-scale';
-import { select, Selection } from 'd3-selection';
+import { Selection } from 'd3-selection';
 import { transition } from 'd3-transition';
 import { PlotComponent } from '../plot/plot.component';
 
@@ -31,7 +31,7 @@ export class SingleBarPlotComponent extends PlotComponent {
 
 
   constructor(componentEl: ElementRef) {
-    super(componentEl, 0, { left: 50, top: 0 }); // makes no sence here
+    super(componentEl);
 
     this.isReady.then(() => {
       this.initPlot();
@@ -40,13 +40,6 @@ export class SingleBarPlotComponent extends PlotComponent {
       this.initBars();
       this.drawUpperBar(this.dataBiGroupCount[0]);
     });
-  }
-
-  protected initPlot() {
-    const { W, H } = this.getSize();
-    this.plotRoot = select(this.plotEl.nativeElement)
-      .attr('viewBox', `0 0 ${W} ${H}`)
-      .append('g');
   }
 
   protected isInputDataValid(changes: SimpleChanges) {
@@ -66,10 +59,9 @@ export class SingleBarPlotComponent extends PlotComponent {
       .append('g')
       .call(axisBottom(this.scaleX));
 
-    this.axisSize = (axisX.node() as SVGAElement).getBBox();
-    axisX.attr('transform', `translate(
-      ${this.MARGIN_LEFT}, ${this.size.H - this.axisSize.height}
-      )`);
+    this.axisSize = (axisX.node() as SVGGElement).getBBox();
+    const marginTop = this.size.H - this.axisSize.height;
+    axisX.attr('transform', `translate(${this.MARGIN_LEFT}, ${marginTop})`);
   }
 
   private getDataSum(data: DataBiGroupCount) {

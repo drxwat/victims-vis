@@ -7,6 +7,11 @@ import { select, selectAll, Selection } from 'd3-selection';
 import { transition, Transition } from 'd3-transition';
 import { PlotComponent } from '../plot/plot.component';
 
+// TODO: ADD GETTERS FOR NEW HEIGHT & WIDTH AFTER AXIS POSITIONING
+
+const WIDTH_OCCUPATION = 0.9;
+const HEIGHT_OCCUPATION = 0.85;
+
 @Component({
   selector: 'app-bar-plot',
   templateUrl: './bar-plot.component.html',
@@ -23,6 +28,14 @@ export class BarPlotComponent extends PlotComponent {
   private axisYSize: DOMRect;
 
   private barsGroup: Selection<SVGGElement, unknown, null, undefined>;
+
+  get MARGIN_LEFT() {
+    return (this.size.W - (this.size.W * WIDTH_OCCUPATION)) / 2;
+  }
+
+  get MARGIN_TOP() {
+    return (this.size.H - (this.size.H * HEIGHT_OCCUPATION)) / 2;
+  }
 
   constructor(componentEl: ElementRef) {
     super(componentEl);
@@ -54,13 +67,13 @@ export class BarPlotComponent extends PlotComponent {
   private initScales(data: DataGroupsCount) {
     this.scaleX = scaleBand()
       .domain(data.map((d) => d[0]))
-      .range([0, this.size.W])
+      .range([0, this.size.W * WIDTH_OCCUPATION])
       .padding(0.2)
 
     const maxY = Math.max(...data.map((d) => d[1]));
     this.scaleY = scaleLinear()
       .domain([0, maxY + (maxY * 0.10)])
-      .range([this.size.H, 0])
+      .range([this.size.H * HEIGHT_OCCUPATION, 0])
   }
 
   private drawAxises() {
@@ -77,8 +90,8 @@ export class BarPlotComponent extends PlotComponent {
     const yWidth = this.axisYSize.width;
     const xHeight = this.axisXSize.height;
 
-    axisX.attr('transform', `translate(${yWidth}, ${this.size.H - xHeight})`);
-    axisY.attr('transform', `translate(${yWidth}, ${-xHeight})`);
+    axisX.attr('transform', `translate(${yWidth + this.MARGIN_LEFT}, ${this.size.H - xHeight})`);
+    axisY.attr('transform', `translate(${yWidth + this.MARGIN_LEFT}, ${-xHeight + (this.MARGIN_TOP * 2)})`);
   }
 
   private initBars(data: DataGroupsCount) {
@@ -87,6 +100,10 @@ export class BarPlotComponent extends PlotComponent {
     const xStart = this.scaleX(data[0][0]) as number;
     const xEnd = this.scaleX.bandwidth() * (data.length + 1);
     const margin = 20; // hack to catch mouseleave from broders of rect
+
+    const translateLeft = this.axisYSize.width + this.MARGIN_LEFT;
+    const translateTop = -(this.axisXSize.height);
+
     this.plotRoot.append('rect')
       .attr('x', xStart - margin)
       .attr('y', 0 - margin)
@@ -96,6 +113,7 @@ export class BarPlotComponent extends PlotComponent {
       .attr('opacity', '.2')
       .attr('visibility', 'visible')
       .attr('pointer-events', 'visible')
+      .attr('transform', `translate(${translateLeft}, ${translateTop})`)
       .on('mouseleave', this.onMouseLeave.bind(this));
 
     this.barsGroup = this.plotRoot.append('g');
@@ -113,6 +131,9 @@ export class BarPlotComponent extends PlotComponent {
       .merge(rectSelection)
       .on('mouseover', this.onMouseOver);
 
+    const translateLeft = this.axisYSize.width + this.MARGIN_LEFT;
+    const translateTop = -(this.axisXSize.height);
+
     (transition.call(rectSelection) as Transition<SVGRectElement, DataGroupCount, null, undefined>)
       .selectAll(() => rectSelection.nodes())
       .duration(duration)
@@ -121,6 +142,7 @@ export class BarPlotComponent extends PlotComponent {
       .attr("y", (d: DataGroupCount) => this.scaleY(d[1]) as number)
       .attr("width", this.scaleX.bandwidth())
       .attr("height", (d: DataGroupCount) => this.size.H - this.scaleY(d[1]))
+      .attr('transform', `translate(${translateLeft}, ${translateTop})`)
       .attr("fill", "#20c997")
       .attr('stroke', '#fff')
       .attr('stroke-width', '3')

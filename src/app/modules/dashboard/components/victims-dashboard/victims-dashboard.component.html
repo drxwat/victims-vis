@@ -1,16 +1,20 @@
-<mat-grid-list cols="3" rowHeight="2:1">
-  <mat-grid-tile>
+<mat-grid-list cols="3" rowHeight="5:1">
+  <mat-grid-tile rowspan="2">
     <div *ngIf="loaded$ | async" class="plot-wrapper">
       <app-density-plot [dataVector]="age$ | async"></app-density-plot>
     </div>
   </mat-grid-tile>
-  <mat-grid-tile>
+  <mat-grid-tile rowspan="2">
     <app-bar-plot *ngIf="loaded$ | async" [dataGroupsCount]="income$ | async"></app-bar-plot>
   </mat-grid-tile>
-  <mat-grid-tile>3</mat-grid-tile>
   <mat-grid-tile>
-    <div *ngIf="loaded$ | async" class="plot-wrapper">
-      <app-density-plot [dataVector]="age$ | async"></app-density-plot>
-    </div>
+    <app-single-bar-plot [dataBiGroupCount]="[['str1', 100], ['str2', 153]]"></app-single-bar-plot>
   </mat-grid-tile>
+  <mat-grid-tile>
+    <app-single-bar-plot [dataBiGroupCount]="[['str1', 250], ['str2', 153]]"></app-single-bar-plot>
+  </mat-grid-tile>
+  <mat-grid-tile>
+    <app-single-bar-plot [dataBiGroupCount]="[['str1', 200], ['str2', 153]]"></app-single-bar-plot>
+  </mat-grid-tile>
+
 </mat-grid-list>

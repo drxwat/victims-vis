@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { BarPlotComponent } from '@shared/components/bar-plot/bar-plot.component';
 import { DensityPlotComponent } from '@shared/components/density-plot/density-plot.component';
+import { SingleBarPlotComponent } from '@shared/components/single-bar-plot/single-bar-plot.component';
 import { VictimsDashboardComponent } from './components/victims-dashboard/victims-dashboard.component';
 import { DashboardRoutingModule } from './dashboard-routing.module';
 
@@ -11,7 +12,8 @@ import { DashboardRoutingModule } from './dashboard-routing.module';
   declarations: [
     VictimsDashboardComponent,
     DensityPlotComponent,
-    BarPlotComponent
+    BarPlotComponent,
+    SingleBarPlotComponent
   ],
   imports: [
     CommonModule,

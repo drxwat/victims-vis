@@ -14,3 +14,4 @@ export interface DataEntity {
 }
 export declare type DataGroupCount = [string, number];
 export declare type DataGroupsCount = DataGroupCount[];
+export declare type DataBiGroupCount = [DataGroupCount, DataGroupCount];

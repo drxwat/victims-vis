@@ -1,4 +1,5 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, Input, OnChanges, SimpleChanges, ViewChild } from '@angular/core';
+import { ANIMATION_DURATION } from '@shared/app.constants';
 import { max, mean } from 'd3-array';
 import { axisBottom, axisLeft } from 'd3-axis';
 import { ScaleLinear, scaleLinear } from 'd3-scale';
@@ -160,7 +161,7 @@ export class DensityPlotComponent implements AfterViewInit, OnChanges {
 
     transition.call(this.plotCurve.datum(density))
       .select(() => this.plotCurve.node())
-      .duration(700)
+      .duration(ANIMATION_DURATION)
       .attr('d', line()
         .curve(curveBasis)
         .x((d) => this.scaleX(d[0]))

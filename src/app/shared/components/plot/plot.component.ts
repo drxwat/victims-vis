@@ -20,7 +20,11 @@ export abstract class PlotComponent implements AfterViewInit, OnChanges {
   private dataIsReady: () => void;
   private viewIsReady: () => void;
 
-  constructor(private componentEl: ElementRef, private margin = 0) {
+  constructor(
+    private componentEl: ElementRef,
+    private margin = 0,
+    private translate: { left: number, top: number }
+  ) {
     this.isReady = Promise.all([
       new Promise((res) => { this.dataIsReady = res }),
       new Promise((res) => { this.viewIsReady = res })
@@ -47,7 +51,7 @@ export abstract class PlotComponent implements AfterViewInit, OnChanges {
     this.plotRoot = select(this.plotEl.nativeElement)
       .attr('viewBox', `0 0 ${W + this.margin} ${H + this.margin}`)
       .append('g')
-      .attr('transform', `translate(${this.margin}, 0)`);
+      .attr('transform', `translate(${this.translate.left}, ${this.translate.top})`);
   }
 
   /**

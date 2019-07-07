@@ -1,12 +1,11 @@
 import { Component, ElementRef, Input, SimpleChanges } from '@angular/core';
+import { ANIMATION_DURATION } from '@shared/app.constants';
 import { DataGroupCount, DataGroupsCount } from '@shared/app.interfaces';
 import { axisBottom, axisLeft } from 'd3-axis';
 import { ScaleBand, scaleBand, ScaleLinear, scaleLinear } from 'd3-scale';
 import { select, selectAll, Selection } from 'd3-selection';
 import { transition, Transition } from 'd3-transition';
 import { PlotComponent } from '../plot/plot.component';
-
-const ANIMATION_DURATION = 700;
 
 @Component({
   selector: 'app-bar-plot',
@@ -23,7 +22,7 @@ export class BarPlotComponent extends PlotComponent {
   private barsGroup: Selection<SVGGElement, unknown, null, undefined>;
 
   constructor(componentEl: ElementRef) {
-    super(componentEl, 50);
+    super(componentEl, 50, { top: 0, left: 50 });
 
     this.isReady.then(() => {
       this.initPlot();
@@ -113,13 +112,13 @@ export class BarPlotComponent extends PlotComponent {
       .attr("fill", "#20c997")
       .attr('stroke', '#fff')
       .attr('stroke-width', '3')
-      .attr('opacity', '.8');
+      .attr('opacity', 0.8);
   }
 
   private onMouseOver(data: DataGroupCount, selectedIndex: number, nodes: SVGRectElement[]) {
     const selectedNode = [...nodes].splice(selectedIndex, 1)[0];
-    selectAll(nodes).style('opacity', 0.2);
-    select(selectedNode).style('opacity', 0.8);
+    selectAll(nodes).attr('opacity', 0.2);
+    select(selectedNode).attr('opacity', 0.8);
   }
 
   private onMouseLeave(data: DataGroupCount, selectedIndex: number, nodes: SVGRectElement[]) {
@@ -129,7 +128,7 @@ export class BarPlotComponent extends PlotComponent {
       mouseEvent.relatedTarget &&
       (mouseEvent.relatedTarget as Element).nodeName !== 'rect'
     ) {
-      this.barsGroup.selectAll('rect').style('opacity', 0.8);
+      this.barsGroup.selectAll('rect').attr('opacity', 0.8);
     }
   }
 }

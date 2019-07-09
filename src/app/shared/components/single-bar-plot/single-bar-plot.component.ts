@@ -1,13 +1,13 @@
 import { Component, ElementRef, Input, SimpleChanges } from '@angular/core';
 import { ANIMATION_DURATION } from '@shared/app.constants';
 import { DataBiGroupCount, DataGroupCount } from '@shared/app.interfaces';
-import { axisBottom } from 'd3-axis';
 import { ScaleLinear, scaleLinear } from 'd3-scale';
 import { Selection } from 'd3-selection';
 import { transition } from 'd3-transition';
-import { PlotComponent } from '../plot/plot.component';
+import { HorizontalAxisPlotComponent } from '../plot/horizontal-axis-plot.component';
 
 const WIDTH_OCCUPATION = 0.85;
+const HEIGHT_OCCUPATION = 1;
 const BAR_HEIGHT_PART = 6; // 1/N
 
 @Component({
@@ -15,28 +15,25 @@ const BAR_HEIGHT_PART = 6; // 1/N
   templateUrl: './single-bar-plot.component.html',
   styleUrls: ['./single-bar-plot.component.css']
 })
-export class SingleBarPlotComponent extends PlotComponent {
+export class SingleBarPlotComponent extends HorizontalAxisPlotComponent {
 
   @Input() dataBiGroupCount: DataBiGroupCount;
 
   private scaleX: ScaleLinear<number, number>;
-  private axisSize: DOMRect;
 
   private bottomBar: Selection<SVGRectElement, unknown, null, undefined>;
   private upperBar: Selection<SVGRectElement, unknown, null, undefined>;
 
-  get MARGIN_LEFT() {
-    return (this.size.W - (this.size.W * WIDTH_OCCUPATION)) / 2;
-  }
-
-
   constructor(componentEl: ElementRef) {
-    super(componentEl);
+    super(componentEl, {
+      WIDTH_OCCUPATION,
+      HEIGHT_OCCUPATION
+    });
 
     this.isReady.then(() => {
       this.initPlot();
       this.initScale(this.dataBiGroupCount);
-      this.drawAxis();
+      this.drawAxis(this.scaleX);
       this.initBars();
       this.drawUpperBar(this.dataBiGroupCount[0]);
     });
@@ -54,24 +51,14 @@ export class SingleBarPlotComponent extends PlotComponent {
       .range([0, this.size.W * WIDTH_OCCUPATION]);
   }
 
-  private drawAxis() {
-    const axisX = this.plotRoot
-      .append('g')
-      .call(axisBottom(this.scaleX));
-
-    this.axisSize = (axisX.node() as SVGGElement).getBBox();
-    const marginTop = this.size.H - this.axisSize.height;
-    axisX.attr('transform', `translate(${this.MARGIN_LEFT}, ${marginTop})`);
-  }
-
   private getDataSum(data: DataBiGroupCount) {
     return data[0][1] + data[1][1];
   }
 
   private initBars() {
     // bottom bar
-    const barHeight = this.size.H / BAR_HEIGHT_PART;
-    const barY = this.size.H - this.axisSize.height - barHeight;
+    const barHeight = this.innerSize.H / BAR_HEIGHT_PART;
+    const barY = this.innerSize.H - this.axisXSize.height - barHeight;
 
     this.bottomBar = this.plotRoot
       .append('rect')

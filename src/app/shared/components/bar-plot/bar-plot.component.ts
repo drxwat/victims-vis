@@ -1,49 +1,40 @@
 import { Component, ElementRef, Input, SimpleChanges } from '@angular/core';
 import { ANIMATION_DURATION } from '@shared/app.constants';
 import { DataGroupCount, DataGroupsCount } from '@shared/app.interfaces';
-import { axisBottom, axisLeft } from 'd3-axis';
 import { ScaleBand, scaleBand, ScaleLinear, scaleLinear } from 'd3-scale';
 import { select, selectAll, Selection } from 'd3-selection';
-import { transition, Transition } from 'd3-transition';
-import { PlotComponent } from '../plot/plot.component';
+import { Transition, transition } from 'd3-transition';
+import { TwoAxisPlotComponent } from '../plot/two-axis-plot.component';
 
 // TODO: ADD GETTERS FOR NEW HEIGHT & WIDTH AFTER AXIS POSITIONING
 
 const WIDTH_OCCUPATION = 0.9;
-const HEIGHT_OCCUPATION = 0.85;
+const HEIGHT_OCCUPATION = 0.8;
 
 @Component({
   selector: 'app-bar-plot',
   templateUrl: './bar-plot.component.html',
   styleUrls: ['./bar-plot.component.css']
 })
-export class BarPlotComponent extends PlotComponent {
+export class BarPlotComponent extends TwoAxisPlotComponent {
 
   @Input() dataGroupsCount: DataGroupsCount = [];
 
   private scaleX: ScaleBand<string>;
   private scaleY: ScaleLinear<number, number>;
 
-  private axisXSize: DOMRect;
-  private axisYSize: DOMRect;
-
   private barsGroup: Selection<SVGGElement, unknown, null, undefined>;
 
-  get MARGIN_LEFT() {
-    return (this.size.W - (this.size.W * WIDTH_OCCUPATION)) / 2;
-  }
-
-  get MARGIN_TOP() {
-    return (this.size.H - (this.size.H * HEIGHT_OCCUPATION)) / 2;
-  }
-
   constructor(componentEl: ElementRef) {
-    super(componentEl);
+    super(componentEl, {
+      WIDTH_OCCUPATION,
+      HEIGHT_OCCUPATION
+    });
 
     this.isReady.then(() => {
       this.initPlot();
       this.initScales(this.dataGroupsCount);
-      this.drawAxises();
+      this.drawAxises(this.scaleX, this.scaleY);
       this.initBars(this.dataGroupsCount);
       this.drawBars(this.dataGroupsCount.map((d) => [d[0], 0]), 0);
       this.drawBars(this.dataGroupsCount, ANIMATION_DURATION);
@@ -76,24 +67,6 @@ export class BarPlotComponent extends PlotComponent {
       .range([this.size.H * HEIGHT_OCCUPATION, 0])
   }
 
-  private drawAxises() {
-    // X axis
-    const axisX = this.plotRoot.append('g')
-      .call(axisBottom(this.scaleX));
-
-    const axisY = this.plotRoot.append('g')
-      .call(axisLeft(this.scaleY));
-
-    this.axisXSize = (axisX.node() as SVGGElement).getBBox();
-    this.axisYSize = (axisY.node() as SVGGElement).getBBox();
-
-    const yWidth = this.axisYSize.width;
-    const xHeight = this.axisXSize.height;
-
-    axisX.attr('transform', `translate(${yWidth + this.MARGIN_LEFT}, ${this.size.H - xHeight})`);
-    axisY.attr('transform', `translate(${yWidth + this.MARGIN_LEFT}, ${-xHeight + (this.MARGIN_TOP * 2)})`);
-  }
-
   private initBars(data: DataGroupsCount) {
     // creating bar with opacity to catch mouseleave correctly
     // it should be wider & higher then bars in all dimentions
@@ -101,22 +74,18 @@ export class BarPlotComponent extends PlotComponent {
     const xEnd = this.scaleX.bandwidth() * (data.length + 1);
     const margin = 20; // hack to catch mouseleave from broders of rect
 
-    const translateLeft = this.axisYSize.width + this.MARGIN_LEFT;
-    const translateTop = -(this.axisXSize.height);
-
-    this.plotRoot.append('rect')
+    this.chartRoot.append('rect')
       .attr('x', xStart - margin)
       .attr('y', 0 - margin)
       .attr('width', xEnd + (2 * margin))
-      .attr('height', this.size.H + (2 * margin))
+      .attr('height', this.innerSize.H + (2 * margin))
       .attr('fill', 'none')
       .attr('opacity', '.2')
       .attr('visibility', 'visible')
       .attr('pointer-events', 'visible')
-      .attr('transform', `translate(${translateLeft}, ${translateTop})`)
       .on('mouseleave', this.onMouseLeave.bind(this));
 
-    this.barsGroup = this.plotRoot.append('g');
+    this.barsGroup = this.chartRoot.append('g');
   }
 
   private drawBars(data: DataGroupsCount, duration = 0) {
@@ -131,9 +100,6 @@ export class BarPlotComponent extends PlotComponent {
       .merge(rectSelection)
       .on('mouseover', this.onMouseOver);
 
-    const translateLeft = this.axisYSize.width + this.MARGIN_LEFT;
-    const translateTop = -(this.axisXSize.height);
-
     (transition.call(rectSelection) as Transition<SVGRectElement, DataGroupCount, null, undefined>)
       .selectAll(() => rectSelection.nodes())
       .duration(duration)
@@ -141,8 +107,7 @@ export class BarPlotComponent extends PlotComponent {
       .attr("x", (d: DataGroupCount) => this.scaleX(d[0]) as number)
       .attr("y", (d: DataGroupCount) => this.scaleY(d[1]) as number)
       .attr("width", this.scaleX.bandwidth())
-      .attr("height", (d: DataGroupCount) => this.size.H - this.scaleY(d[1]))
-      .attr('transform', `translate(${translateLeft}, ${translateTop})`)
+      .attr("height", (d: DataGroupCount) => this.innerSize.H - this.scaleY(d[1]))
       .attr("fill", "#20c997")
       .attr('stroke', '#fff')
       .attr('stroke-width', '3')

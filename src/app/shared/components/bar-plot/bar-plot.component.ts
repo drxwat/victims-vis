@@ -83,7 +83,9 @@ export class BarPlotComponent extends TwoAxisPlotComponent {
       .attr('opacity', '.2')
       .attr('visibility', 'visible')
       .attr('pointer-events', 'visible')
-      .on('mouseleave', this.onMouseLeave.bind(this));
+    // .on('mouseleave', this.onMouseLeave.bind(this));
+
+    this.chartRoot.on('mouseleave', this.onMouseLeave.bind(this));
 
     this.barsGroup = this.chartRoot.append('g');
   }

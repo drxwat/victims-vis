@@ -14,7 +14,8 @@
     <app-single-bar-plot [dataBiGroupCount]="[['str1', 250], ['str2', 153]]"></app-single-bar-plot>
   </mat-grid-tile>
   <mat-grid-tile>
-    <app-single-bar-plot [dataBiGroupCount]="[['str1', 200], ['str2', 153]]"></app-single-bar-plot>
+    <app-single-bar-plot *ngIf="loaded$ | async" [dataBiGroupCount]="[['str1', 200], ['str2', 153]]">
+    </app-single-bar-plot>
   </mat-grid-tile>
 
 </mat-grid-list>

@@ -7,7 +7,6 @@ import { transition } from 'd3-transition';
 import { HorizontalAxisPlotComponent } from '../plot/horizontal-axis-plot.component';
 
 const WIDTH_OCCUPATION = 0.85;
-const HEIGHT_OCCUPATION = 1;
 const BAR_HEIGHT_PART = 6; // 1/N
 
 @Component({
@@ -26,8 +25,7 @@ export class SingleBarPlotComponent extends HorizontalAxisPlotComponent {
 
   constructor(componentEl: ElementRef) {
     super(componentEl, {
-      WIDTH_OCCUPATION,
-      HEIGHT_OCCUPATION
+      WIDTH_OCCUPATION
     });
 
     this.isReady.then(() => {
@@ -36,6 +34,7 @@ export class SingleBarPlotComponent extends HorizontalAxisPlotComponent {
       this.drawAxis(this.scaleX);
       this.initBars();
       this.drawUpperBar(this.dataBiGroupCount[0]);
+      this.drawTitle();
     });
   }
 
@@ -60,23 +59,21 @@ export class SingleBarPlotComponent extends HorizontalAxisPlotComponent {
     const barHeight = this.innerSize.H / BAR_HEIGHT_PART;
     const barY = this.innerSize.H - this.axisXSize.height - barHeight;
 
-    this.bottomBar = this.plotRoot
+    this.bottomBar = this.chartRoot
       .append('rect')
       .attr('x', 0)
       .attr('y', barY)
       .attr('width', this.size.W * WIDTH_OCCUPATION)
       .attr('height', barHeight)
-      .attr('transform', `translate(${this.MARGIN_LEFT}, 0)`)
       .attr("fill", "#fff");
 
     // upper bar
-    this.upperBar = this.plotRoot
+    this.upperBar = this.chartRoot
       .append('rect')
       .attr('x', 0)
       .attr('y', barY)
       .attr('width', 0)
       .attr('height', barHeight)
-      .attr('transform', `translate(${this.MARGIN_LEFT}, 0)`)
       .attr("fill", "#20c997");
   }
 
@@ -85,5 +82,13 @@ export class SingleBarPlotComponent extends HorizontalAxisPlotComponent {
       .select(() => this.upperBar.node())
       .duration(ANIMATION_DURATION * 1.5)
       .attr('width', (d: DataGroupCount) => this.scaleX(d[1]));
+  }
+
+  private drawTitle() {
+    this.chartRoot
+      .append('text')
+      .attr('x', 0)
+      .attr('y', 0)
+      .text('Title')
   }
 }

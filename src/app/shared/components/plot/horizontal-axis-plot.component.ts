@@ -24,10 +24,7 @@ export abstract class HorizontalAxisPlotComponent extends PlotComponent {
 
     this.axisXSize = (axisX.node() as SVGGElement).getBBox();
 
-    axisX.attr('transform', `translate(
-      ${this.MARGIN_LEFT}, 
-      ${this.size.H - this.MARGIN_TOP - this.axisXSize.height}
-      )`);
+    axisX.attr('transform', `translate(${this.MARGIN_LEFT}, ${this.size.H - this.MARGIN_TOP - this.axisXSize.height})`);
 
     this.chartRoot = this.plotRoot
       .append('g')

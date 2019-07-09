@@ -1,17 +1,18 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, Input, OnChanges, SimpleChanges, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, Input, SimpleChanges } from '@angular/core';
 import { ANIMATION_DURATION } from '@shared/app.constants';
 import { max, mean } from 'd3-array';
-import { axisBottom, axisLeft } from 'd3-axis';
 import { ScaleLinear, scaleLinear } from 'd3-scale';
-import { select, Selection } from 'd3-selection';
 import { curveBasis, line } from 'd3-shape';
 import { transition } from 'd3-transition';
+import { TwoAxisPlotComponent } from '../plot/two-axis-plot.component';
 
 export declare type DataVector = number[];
 declare type Density = number[][];
 declare type KernelDensityEstimator = (data: DataVector) => Density;
 
-const MARGIN = 50;
+const WIDTH_OCCUPATION = 0.9;
+const HEIGHT_OCCUPATION = 0.8;
+
 
 @Component({
   selector: 'app-density-plot',
@@ -19,16 +20,11 @@ const MARGIN = 50;
   styleUrls: ['./density-plot.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class DensityPlotComponent implements AfterViewInit, OnChanges {
+export class DensityPlotComponent extends TwoAxisPlotComponent {
 
   @Input() dataVector: DataVector = [];
 
-  @ViewChild('plot', { read: ElementRef, static: false })
-  private plotEl: ElementRef;
-  private plotRoot: Selection<SVGGElement, unknown, null, undefined>;
   private plotCurve: any;
-
-  private size: { w: number, h: number };
 
   private scaleX: ScaleLinear<number, number>;
   private scaleY: ScaleLinear<number, number>;
@@ -36,42 +32,32 @@ export class DensityPlotComponent implements AfterViewInit, OnChanges {
   private kde: KernelDensityEstimator;
   private density: Density;
 
-  private isInitialized = false;
-  private isReady: Promise<any>;
-  private dataIsReady: () => void;
-  private viewIsReady: () => void;
-
-  constructor(private componentEl: ElementRef) {
-    this.isReady = Promise.all([
-      new Promise((res) => { this.dataIsReady = res }),
-      new Promise((res) => { this.viewIsReady = res })
-    ]);
+  constructor(componentEl: ElementRef) {
+    super(componentEl, {
+      WIDTH_OCCUPATION,
+      HEIGHT_OCCUPATION
+    });
 
     this.isReady.then(() => {
       this.init();
-      // zero line for animation
+      // // zero line for animation
       this.drawCurve(this.density.map((d) => [d[0], 0]));
-      this.isInitialized = true;
       this.drawCurve(this.density);
     })
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    const isDataValid = !this.isInitialized &&
-      Array.isArray(changes.dataVector.currentValue) &&
-      changes.dataVector.currentValue.length > 0;
+    super.ngOnChanges(changes);
 
-    if (isDataValid) {
-      this.dataIsReady();
-    }
-
-    if (this.isInitialized) {
+    if (this.isInitialized && this.isInputDataValid(changes)) {
       this.redrawCurve();
     }
   }
 
-  async ngAfterViewInit() {
-    this.viewIsReady();
+  protected isInputDataValid(changes: SimpleChanges) {
+    return !this.isInitialized &&
+      Array.isArray(changes.dataVector.currentValue) &&
+      changes.dataVector.currentValue.length > 0;
   }
 
   /**
@@ -79,13 +65,12 @@ export class DensityPlotComponent implements AfterViewInit, OnChanges {
    */
 
   private init() {
-    this.initSize();
     this.initPlot();
     this.initScaleX(this.dataVector);
     this.initKDE(this.scaleX);
     this.calculateDensity(this.dataVector, this.kde);
     this.initScaleY(this.density);
-    this.drawAxises();
+    this.drawAxises(this.scaleX, this.scaleY);
     this.initCurve();
   }
 
@@ -98,25 +83,11 @@ export class DensityPlotComponent implements AfterViewInit, OnChanges {
    * Low level API
    */
 
-  private initSize() {
-    this.size = {
-      w: this.componentEl.nativeElement.clientWidth,
-      h: this.componentEl.nativeElement.clientHeight
-    };
-  }
-
-  private initPlot() {
-    this.plotRoot = select(this.plotEl.nativeElement)
-      .attr('viewBox', `0 0 ${this.size.w + MARGIN} ${this.size.h + MARGIN}`)
-      .append('g')
-      .attr('transform', `translate(${MARGIN}, 0)`);
-  }
-
   private initScaleX(data: DataVector) {
     const maxVal = max(data) as number;
     this.scaleX = scaleLinear()
       .domain([0, maxVal + (0.10 * maxVal)])
-      .range([0, this.size.w]);
+      .range([0, this.size.W * WIDTH_OCCUPATION]);
   }
 
   private initScaleY(density: Density) {
@@ -124,7 +95,7 @@ export class DensityPlotComponent implements AfterViewInit, OnChanges {
     const maxVal = max(values) as number;
     this.scaleY = scaleLinear()
       .domain([0, maxVal + (0.10 * maxVal)])
-      .range([this.size.h, 0])
+      .range([this.size.H * HEIGHT_OCCUPATION, 0])
   }
 
   private initKDE(scaleX: ScaleLinear<number, number>) {
@@ -138,18 +109,8 @@ export class DensityPlotComponent implements AfterViewInit, OnChanges {
     this.density = kde(data);
   }
 
-  private drawAxises() {
-    this.plotRoot.append('g')
-      .attr('transform', `translate(0, ${this.size.h})`)
-      .call(axisBottom(this.scaleX)
-        .ticks(this.size.w / 30));
-
-    this.plotRoot.append('g')
-      .call(axisLeft(this.scaleY).ticks(this.size.h / 25));
-  }
-
   private initCurve() {
-    this.plotCurve = this.plotRoot.append('path')
+    this.plotCurve = this.chartRoot.append('path')
       .attr('fill', '#20c997')
       .attr('opacity', '.8')
       .attr('stroke', '#fff')

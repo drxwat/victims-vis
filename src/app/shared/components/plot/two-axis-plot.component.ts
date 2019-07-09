@@ -32,10 +32,10 @@ export abstract class TwoAxisPlotComponent extends PlotComponent {
     scaleY: ScaleContinuousNumeric<any, any> | ScaleBand<any>
   ) {
     const axisX = this.plotRoot.append('g')
-      .call(axisBottom(scaleX));
+      .call(axisBottom(scaleX).ticks(this.size.W / 30));
 
     const axisY = this.plotRoot.append('g')
-      .call(axisLeft(scaleY));
+      .call(axisLeft(scaleY).ticks(this.size.H / 25));
 
     this.axisXSize = (axisX.node() as SVGGElement).getBBox();
     this.axisYSize = (axisY.node() as SVGGElement).getBBox();

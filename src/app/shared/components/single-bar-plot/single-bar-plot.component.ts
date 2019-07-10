@@ -39,10 +39,17 @@ export class SingleBarPlotComponent extends HorizontalAxisPlotComponent {
     });
   }
 
+  ngOnChanges(changes: SimpleChanges) {
+    super.ngOnChanges(changes);
+
+    if (this.isInitialized && this.isInputDataValid(changes)) {
+      this.drawUpperBar(this.dataBiGroupCount[0]);
+    }
+  }
+
   protected isInputDataValid(changes: SimpleChanges) {
     const val = changes.dataBiGroupCount.currentValue as DataBiGroupCount;
-    return !this.isInitialized &&
-      Array.isArray(val) &&
+    return Array.isArray(val) &&
       Array.isArray(val[0]) &&
       Array.isArray(val[1]) &&
       (val[0][1] > 0 || val[1][1] > 0);

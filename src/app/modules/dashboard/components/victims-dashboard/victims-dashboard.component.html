@@ -1,4 +1,15 @@
-<mat-grid-list *ngIf="loaded$ | async" cols="3" rowHeight="4:1">
+<form [formGroup]="filtersGroup" class="filters">
+  <mat-form-field>
+    <mat-label>Тип преступления</mat-label>
+    <mat-select formControlName="crimeType">
+      <mat-option *ngFor="let crime of crimeTypes$ | async" [value]="crime">
+        {{crime}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+</form>
+
+<mat-grid-list *ngIf="loaded$ | async" cols="3" rowHeight="4:1" gutterSize="15px">
   <!-- FIRST ROW -->
   <mat-grid-tile rowspan="2">
     <app-density-plot [dataVector]="age$ | async" title="Распределение возраста">

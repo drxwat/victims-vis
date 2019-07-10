@@ -1,10 +1,11 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { FormControl, FormGroup } from '@angular/forms';
 import { dataEntriesToGroupsCountMap, groupsCountMapToDataBiGroupCount, groupsCountMapToOrderedDataGroupCount } from '@shared/app.data-helpers';
 import { EDUCATION_ORDERED, INCOME_ORDERED, SOCIAL_STATUS } from '@shared/app.data-meta';
 import { CrimeType, DataEntity } from '@shared/app.interfaces';
 import { csv } from 'd3-fetch';
 import { BehaviorSubject } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { filter, map, take } from 'rxjs/operators';
 
 @Component({
   selector: 'app-victims-dashboard',
@@ -17,6 +18,10 @@ export class VictimsDashboardComponent implements OnInit {
   private data$ = new BehaviorSubject<DataEntity[]>([]);
 
   loaded$ = this.data$.pipe(map((d) => !!d));
+
+  /**
+   * Display data
+   */
 
   age$ = this.data$.pipe(map((d) => d.map((row) => row.resp_age)));
 
@@ -49,6 +54,20 @@ export class VictimsDashboardComponent implements OnInit {
     map(groupsCountMapToOrderedDataGroupCount(SOCIAL_STATUS))
   );
 
+  /**
+   * Filters data
+   */
+
+  crimeTypes$ = this.data$.pipe(
+    filter((d) => d.length > 0),
+    take(1),
+    map((d) => new Set(d.map((row) => row.crime_type)))
+  );
+
+  filtersGroup = new FormGroup({
+    crimeType: new FormControl()
+  });
+
   async ngOnInit() {
     const data = await csv<DataEntity, keyof DataEntity>('assets/web_subset.csv', {},
       (rawRow) => {
@@ -65,6 +84,11 @@ export class VictimsDashboardComponent implements OnInit {
         return entityRow;
       });
     this.data$.next(data);
+
+    this.filtersGroup.valueChanges.subscribe((filterValue) => {
+      const subData = data.filter((row) => row.crime_type === filterValue['crimeType']);
+      this.data$.next(subData);
+    });
   }
 
   private castToInt(value: string | 'NA') {

@@ -8,7 +8,7 @@ import { TwoAxisPlotComponent } from '../plot/two-axis-plot.component';
 
 // TODO: ADD GETTERS FOR NEW HEIGHT & WIDTH AFTER AXIS POSITIONING
 
-const WIDTH_OCCUPATION = 0.9;
+const WIDTH_OCCUPATION = 0.8;
 const HEIGHT_OCCUPATION = 0.8;
 
 @Component({
@@ -52,8 +52,7 @@ export class BarPlotComponent extends TwoAxisPlotComponent {
   }
 
   protected isInputDataValid(changes: SimpleChanges) {
-    return !this.isInitialized &&
-      Array.isArray(changes.dataGroupsCount.currentValue) &&
+    return Array.isArray(changes.dataGroupsCount.currentValue) &&
       changes.dataGroupsCount.currentValue.length > 0;
   }
 

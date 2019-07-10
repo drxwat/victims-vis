@@ -10,7 +10,7 @@ export declare type DataVector = number[];
 declare type Density = number[][];
 declare type KernelDensityEstimator = (data: DataVector) => Density;
 
-const WIDTH_OCCUPATION = 0.9;
+const WIDTH_OCCUPATION = 0.8;
 const HEIGHT_OCCUPATION = 0.8;
 
 
@@ -57,8 +57,7 @@ export class DensityPlotComponent extends TwoAxisPlotComponent {
   }
 
   protected isInputDataValid(changes: SimpleChanges) {
-    return !this.isInitialized &&
-      Array.isArray(changes.dataVector.currentValue) &&
+    return Array.isArray(changes.dataVector.currentValue) &&
       changes.dataVector.currentValue.length > 0;
   }
 

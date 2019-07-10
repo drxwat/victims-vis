@@ -18,8 +18,27 @@ const HEIGHT_OCCUPATION = 0.8;
 })
 export class BarPlotComponent extends TwoAxisPlotComponent {
 
+  private _dataGroupsCount: DataGroupsCount = [];
+
   @Input() title: string = '';
-  @Input() dataGroupsCount: DataGroupsCount = [];
+  @Input() isAbsolute = false;
+
+  @Input('dataGroupsCount')
+  set dataGroupsCount(value: DataGroupsCount) {
+    if (!value || value.length === 0) {
+      return;
+    }
+    if (this.isAbsolute) {
+      this._dataGroupsCount = value;
+      return;
+    }
+    const sum = value.map((row) => row[1]).reduce((acc, val) => acc + val);
+    this._dataGroupsCount = value.map((row) => [row[0], row[1] / sum]);
+  };
+
+  get dataGroupsCount() {
+    return this._dataGroupsCount;
+  }
 
   private scaleX: ScaleBand<string>;
   private scaleY: ScaleLinear<number, number>;

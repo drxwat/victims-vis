@@ -16,8 +16,27 @@ const BAR_HEIGHT_PART = 6; // 1/N
 })
 export class SingleBarPlotComponent extends HorizontalAxisPlotComponent {
 
+  private _dataBiGroupCount: DataBiGroupCount;
+
   @Input() title: string = '';
-  @Input() dataBiGroupCount: DataBiGroupCount;
+  @Input() isAbsolute = false;
+
+  @Input('dataBiGroupCount')
+  set dataBiGroupCount(value: DataBiGroupCount) {
+    if (!value || value.length !== 2) {
+      return;
+    }
+    if (this.isAbsolute) {
+      this._dataBiGroupCount = value;
+      return;
+    }
+    const sum = this.getDataSum(value);
+    this._dataBiGroupCount = value.map((row) => [row[0], row[1] / sum]) as DataBiGroupCount;
+  };
+
+  get dataBiGroupCount() {
+    return this._dataBiGroupCount;
+  }
 
   private scaleX: ScaleLinear<number, number>;
 

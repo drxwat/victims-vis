@@ -28,7 +28,8 @@
 
   <!-- SECOND ROW -->
   <mat-grid-tile rowspan="2">
-    <app-bar-plot [dataGroupsCount]="education$ | async" title="Уровень образования"></app-bar-plot>
+    <app-bar-plot [dataGroupsCount]="education$ | async" title="Уровень образования">
+    </app-bar-plot>
   </mat-grid-tile>
   <mat-grid-tile rowspan="2">
     <app-density-plot [dataVector]="population$ | async" title="Население">

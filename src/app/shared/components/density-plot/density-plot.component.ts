@@ -70,6 +70,7 @@ export class DensityPlotComponent extends TwoAxisPlotComponent {
     this.initScaleX(this.dataVector);
     this.initKDE(this.scaleX);
     this.calculateDensity(this.dataVector, this.kde);
+    console.log(this.density);
     this.initScaleY(this.density);
     this.drawAxises(this.scaleX, this.scaleY);
     this.initCurve();

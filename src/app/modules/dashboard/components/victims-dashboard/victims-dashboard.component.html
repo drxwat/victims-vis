@@ -1,21 +1,30 @@
-<mat-grid-list cols="3" rowHeight="5:1">
+<mat-grid-list *ngIf="loaded$ | async" cols="3" rowHeight="4:1">
+  <!-- FIRST ROW -->
   <mat-grid-tile rowspan="2">
-    <div *ngIf="loaded$ | async" class="plot-wrapper">
-      <app-density-plot [dataVector]="age$ | async"></app-density-plot>
-    </div>
+    <app-density-plot [dataVector]="age$ | async" title="Распределение возраста">
+    </app-density-plot>
   </mat-grid-tile>
   <mat-grid-tile rowspan="2">
-    <app-bar-plot *ngIf="loaded$ | async" [dataGroupsCount]="income$ | async"></app-bar-plot>
+    <app-bar-plot [dataGroupsCount]="income$ | async" title="Благосостояние"></app-bar-plot>
   </mat-grid-tile>
   <mat-grid-tile>
-    <app-single-bar-plot [dataBiGroupCount]="[['str1', 100], ['str2', 153]]"></app-single-bar-plot>
+    <app-single-bar-plot [dataBiGroupCount]="isMale$ | async" title="Соотношение мужчин и женщин"></app-single-bar-plot>
   </mat-grid-tile>
   <mat-grid-tile>
-    <app-single-bar-plot [dataBiGroupCount]="[['str1', 250], ['str2', 153]]"></app-single-bar-plot>
-  </mat-grid-tile>
-  <mat-grid-tile>
-    <app-single-bar-plot *ngIf="loaded$ | async" [dataBiGroupCount]="[['str1', 200], ['str2', 153]]">
+    <app-single-bar-plot [dataBiGroupCount]="isCity$ | async" title="Соотношение горожан и жителей др. насел. пунктов">
     </app-single-bar-plot>
+  </mat-grid-tile>
+
+  <!-- SECOND ROW -->
+  <mat-grid-tile rowspan="2">
+    <app-bar-plot [dataGroupsCount]="education$ | async" title="Уровень образования"></app-bar-plot>
+  </mat-grid-tile>
+  <mat-grid-tile rowspan="2">
+    <app-density-plot [dataVector]="population$ | async" title="Население">
+    </app-density-plot>
+  </mat-grid-tile>
+  <mat-grid-tile rowspan="2">
+    <app-bar-plot [dataGroupsCount]="socialStatus$ | async" title="Социальный статус"></app-bar-plot>
   </mat-grid-tile>
 
 </mat-grid-list>

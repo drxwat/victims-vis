@@ -22,6 +22,7 @@ const HEIGHT_OCCUPATION = 0.8;
 })
 export class DensityPlotComponent extends TwoAxisPlotComponent {
 
+  @Input() title: string = '';
   @Input() dataVector: DataVector = [];
 
   private plotCurve: any;
@@ -43,6 +44,7 @@ export class DensityPlotComponent extends TwoAxisPlotComponent {
       // // zero line for animation
       this.drawCurve(this.density.map((d) => [d[0], 0]));
       this.drawCurve(this.density);
+      this.drawTitle();
     })
   }
 
@@ -128,6 +130,19 @@ export class DensityPlotComponent extends TwoAxisPlotComponent {
         .x((d) => this.scaleX(d[0]))
         .y((d) => this.scaleY(d[1]))
       );
+  }
+
+  private drawTitle() {
+    let titleWidthFraqtion = this.title.length * 10 / this.innerSize.W;
+    titleWidthFraqtion = titleWidthFraqtion < 0.9 ? titleWidthFraqtion : 0.9;
+    this.chartRoot
+      .append('text')
+      .attr('text-anchor', 'middle')
+      .attr('lengthAdjust', 'spacingAndGlyphs')
+      .attr('textLength', this.innerSize.W * titleWidthFraqtion)
+      .attr('x', this.innerSize.W / 2)
+      .attr('y', 0)
+      .text(this.title)
   }
 
   /** 

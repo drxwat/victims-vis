@@ -18,6 +18,7 @@ const HEIGHT_OCCUPATION = 0.8;
 })
 export class BarPlotComponent extends TwoAxisPlotComponent {
 
+  @Input() title: string = '';
   @Input() dataGroupsCount: DataGroupsCount = [];
 
   private scaleX: ScaleBand<string>;
@@ -38,6 +39,7 @@ export class BarPlotComponent extends TwoAxisPlotComponent {
       this.initBars(this.dataGroupsCount);
       this.drawBars(this.dataGroupsCount.map((d) => [d[0], 0]), 0);
       this.drawBars(this.dataGroupsCount, ANIMATION_DURATION);
+      this.drawTitle();
     });
   }
 
@@ -114,6 +116,19 @@ export class BarPlotComponent extends TwoAxisPlotComponent {
       .attr('stroke', '#fff')
       .attr('stroke-width', '3')
       .attr('opacity', 0.8);
+  }
+
+  private drawTitle() {
+    let titleWidthFraqtion = this.title.length * 10 / this.innerSize.W;
+    titleWidthFraqtion = titleWidthFraqtion < 0.9 ? titleWidthFraqtion : 0.9;
+    this.chartRoot
+      .append('text')
+      .attr('text-anchor', 'middle')
+      .attr('lengthAdjust', 'spacingAndGlyphs')
+      .attr('textLength', this.innerSize.W * titleWidthFraqtion)
+      .attr('x', this.innerSize.W / 2)
+      .attr('y', 0)
+      .text(this.title)
   }
 
   private onMouseOver(data: DataGroupCount, selectedIndex: number, nodes: SVGRectElement[]) {

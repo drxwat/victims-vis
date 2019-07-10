@@ -2,7 +2,7 @@ import { ElementRef } from '@angular/core';
 import { axisBottom, axisLeft } from 'd3-axis';
 import { ScaleBand, ScaleContinuousNumeric } from 'd3-scale';
 import { Selection } from 'd3-selection';
-import { PlotComponent, PlotConfiguration } from './plot.component';
+import { PlotComponent, PlotConfiguration, Size } from './plot.component';
 
 /**
  * Creates X & Y axises and inner G element for chart just inside the axises
@@ -13,14 +13,15 @@ export abstract class TwoAxisPlotComponent extends PlotComponent {
   protected axisYSize: DOMRect;
   protected chartRoot: Selection<SVGGElement, unknown, null, undefined>;
 
+  private __innerSize: Size;
   protected get innerSize() {
-    if (!this._innerSize) {
-      this._innerSize = {
+    if (!this.__innerSize) {
+      this.__innerSize = {
         W: this.size.W - (this.MARGIN_LEFT * 2) - this.axisYSize.width,
         H: this.size.H - (this.MARGIN_TOP * 2)
       };
     }
-    return this._innerSize;
+    return this.__innerSize;
   }
 
   constructor(componentEl: ElementRef, protected config?: PlotConfiguration) {

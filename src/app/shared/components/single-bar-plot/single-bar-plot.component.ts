@@ -16,6 +16,7 @@ const BAR_HEIGHT_PART = 6; // 1/N
 })
 export class SingleBarPlotComponent extends HorizontalAxisPlotComponent {
 
+  @Input() title: string = '';
   @Input() dataBiGroupCount: DataBiGroupCount;
 
   private scaleX: ScaleLinear<number, number>;
@@ -39,9 +40,12 @@ export class SingleBarPlotComponent extends HorizontalAxisPlotComponent {
   }
 
   protected isInputDataValid(changes: SimpleChanges) {
+    const val = changes.dataBiGroupCount.currentValue as DataBiGroupCount;
     return !this.isInitialized &&
-      Array.isArray(changes.dataBiGroupCount.currentValue) &&
-      changes.dataBiGroupCount.currentValue.length > 0;
+      Array.isArray(val) &&
+      Array.isArray(val[0]) &&
+      Array.isArray(val[1]) &&
+      (val[0][1] > 0 || val[1][1] > 0);
   }
 
   private initScale(data: DataBiGroupCount) {
@@ -85,10 +89,15 @@ export class SingleBarPlotComponent extends HorizontalAxisPlotComponent {
   }
 
   private drawTitle() {
+    let titleWidthFraqtion = this.title.length * 10 / this.innerSize.W;
+    titleWidthFraqtion = titleWidthFraqtion < 0.9 ? titleWidthFraqtion : 0.9;
     this.chartRoot
       .append('text')
-      .attr('x', 0)
-      .attr('y', 0)
-      .text('Title')
+      .attr('text-anchor', 'middle')
+      .attr('lengthAdjust', 'spacingAndGlyphs')
+      .attr('textLength', this.innerSize.W * titleWidthFraqtion)
+      .attr('x', this.innerSize.W / 2)
+      .attr('y', this.innerSize.H / 2)
+      .text(this.title)
   }
 }

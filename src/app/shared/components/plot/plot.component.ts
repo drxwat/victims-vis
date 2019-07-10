@@ -28,7 +28,7 @@ export abstract class PlotComponent implements AfterViewInit, OnChanges {
     return this._size;
   }
 
-  protected _innerSize?: Size;
+  private _innerSize?: Size;
   protected get innerSize() { // size inside margins. override if Y axis added
     if (!this._innerSize) {
       this._innerSize = {

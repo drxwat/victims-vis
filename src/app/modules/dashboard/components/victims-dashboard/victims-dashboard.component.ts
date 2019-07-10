@@ -1,23 +1,10 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { INCOME_ORDERED } from '@shared/app.data-meta';
-import { CrimeType, DataEntity, IntBool } from '@shared/app.interfaces';
+import { dataEntriesToGroupsCountMap, groupsCountMapToDataBiGroupCount, groupsCountMapToOrderedDataGroupCount } from '@shared/app.data-helpers';
+import { EDUCATION_ORDERED, INCOME_ORDERED, SOCIAL_STATUS } from '@shared/app.data-meta';
+import { CrimeType, DataEntity } from '@shared/app.interfaces';
 import { csv } from 'd3-fetch';
 import { BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
-
-const dataEntriesToGroupsCountMap = (d: DataEntity[]) => {
-  return d.reduce<Map<string, number>>((map, row) => {
-    if (!row.resp_income) {
-      return map;
-    }
-    if (map.has(row.resp_income)) {
-      map.set(row.resp_income, (map.get(row.resp_income) as number) + 1);
-    } else {
-      map.set(row.resp_income, 1);
-    }
-    return map;
-  }, new Map())
-}
 
 @Component({
   selector: 'app-victims-dashboard',
@@ -30,18 +17,36 @@ export class VictimsDashboardComponent implements OnInit {
   private data$ = new BehaviorSubject<DataEntity[]>([]);
 
   loaded$ = this.data$.pipe(map((d) => !!d));
+
   age$ = this.data$.pipe(map((d) => d.map((row) => row.resp_age)));
 
   income$ = this.data$.pipe(
-    map(dataEntriesToGroupsCountMap),
-    map((m) => {
-      if (m.size === 0) {
-        return [];
-      }
-      return [
-        ...INCOME_ORDERED
-      ].map<[string, number]>((i) => [i, m.get(i) || 0]);
-    })
+    map(dataEntriesToGroupsCountMap('resp_income')),
+    map(groupsCountMapToOrderedDataGroupCount(INCOME_ORDERED))
+  );
+
+  population$ = this.data$.pipe(map((d) => {
+    return d.map((row) => row.resp_place_population).filter((p) => p !== 'NA');
+  }));
+
+  isMale$ = this.data$.pipe(
+    map(dataEntriesToGroupsCountMap('resp_is_male')),
+    map(groupsCountMapToDataBiGroupCount('Женщины', 'Мужчины'))
+  );
+
+  isCity$ = this.data$.pipe(
+    map(dataEntriesToGroupsCountMap('resp_place_is_city')),
+    map(groupsCountMapToDataBiGroupCount('Город', 'Не Город'))
+  );
+
+  education$ = this.data$.pipe(
+    map(dataEntriesToGroupsCountMap('resp_edu')),
+    map(groupsCountMapToOrderedDataGroupCount(EDUCATION_ORDERED))
+  );
+
+  socialStatus$ = this.data$.pipe(
+    map(dataEntriesToGroupsCountMap('resp_ses')),
+    map(groupsCountMapToOrderedDataGroupCount(SOCIAL_STATUS))
   );
 
   async ngOnInit() {
@@ -50,11 +55,22 @@ export class VictimsDashboardComponent implements OnInit {
         const entityRow: DataEntity = {
           crime_type: rawRow.crime_type as CrimeType,
           resp_age: +(rawRow.resp_age as string),
-          resp_is_male: +(rawRow.resp_is_male as '0' | '1') as IntBool,
-          resp_income: rawRow.resp_income
+          resp_is_male: rawRow.resp_is_male as '0' | '1',
+          resp_income: rawRow.resp_income as string,
+          resp_place_population: this.castToInt(rawRow.resp_place_population as string),
+          resp_place_is_city: rawRow.resp_place_is_city as '0' | '1' | 'NA',
+          resp_edu: rawRow.resp_edu as string,
+          resp_ses: rawRow.resp_ses as string
         };
         return entityRow;
       });
     this.data$.next(data);
+  }
+
+  private castToInt(value: string | 'NA') {
+    if (value !== 'NA') {
+      return +value;
+    }
+    return value;
   }
 }

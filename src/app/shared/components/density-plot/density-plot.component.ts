@@ -7,7 +7,7 @@ import { transition } from 'd3-transition';
 import { TwoAxisPlotComponent } from '../plot/two-axis-plot.component';
 
 export declare type DataVector = number[];
-declare type Density = number[][];
+declare type Density = [number, number][];
 declare type KernelDensityEstimator = (data: DataVector) => Density;
 
 const WIDTH_OCCUPATION = 0.8;
@@ -70,7 +70,6 @@ export class DensityPlotComponent extends TwoAxisPlotComponent {
     this.initScaleX(this.dataVector);
     this.initKDE(this.scaleX);
     this.calculateDensity(this.dataVector, this.kde);
-    console.log(this.density);
     this.initScaleY(this.density);
     this.drawAxises(this.scaleX, this.scaleY);
     this.initCurve();
@@ -121,15 +120,18 @@ export class DensityPlotComponent extends TwoAxisPlotComponent {
   }
 
   private drawCurve(density: Density) {
+    let ln = line()
+      .curve(curveBasis)
+      .x((d) => this.scaleX(d[0]))
+      .y((d) => this.scaleY(d[1]))(density) as string;
+
+    // Forcing line to go by X axis
+    ln = `M 0,${this.innerSize.H} L${ln.substring(1)} L ${this.size.W * WIDTH_OCCUPATION},${this.innerSize.H}`;
 
     transition.call(this.plotCurve.datum(density))
       .select(() => this.plotCurve.node())
       .duration(ANIMATION_DURATION)
-      .attr('d', line()
-        .curve(curveBasis)
-        .x((d) => this.scaleX(d[0]))
-        .y((d) => this.scaleY(d[1]))
-      );
+      .attr('d', ln);
   }
 
   private drawTitle() {

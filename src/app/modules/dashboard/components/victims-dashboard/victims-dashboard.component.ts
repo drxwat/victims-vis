@@ -33,9 +33,9 @@ export class VictimsDashboardComponent implements OnInit {
   population$ = this.data$.pipe(map((d) => {
     return d
       .map((row) => row.resp_place_population)
-      .filter((p) => p !== 'NA' && Number.isFinite(p) && !isNaN(p))
+      .filter((p) => p !== 'NA')
       .map((p) => p as number / 100000)
-      .filter((p) => p < 15)
+      .filter((p) => p < 100)
   }));
 
   isMale$ = this.data$.pipe(

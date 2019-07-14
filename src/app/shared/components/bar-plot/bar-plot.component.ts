@@ -62,7 +62,9 @@ export class BarPlotComponent extends TwoAxisPlotComponent {
       this.drawBars(this.dataGroupsCount.map((d) => [d[0], 0]), 0);
       this.drawBars(this.dataGroupsCount, ANIMATION_DURATION);
       this.drawTitle();
-      this.initLegend();
+      if (!this.showGroupNames) {
+        this.initLegend();
+      }
     });
   }
 
@@ -158,7 +160,18 @@ export class BarPlotComponent extends TwoAxisPlotComponent {
     this.legendText = this.plotRoot
       .append('text')
       .attr('y', this.size.H - (this.MARGIN_TOP / 2))
-      .style('font-size', '85%')
+      .style('font-size', '85%');
+    this.showDefaultLegend();
+  }
+
+  private showDefaultLegend() {
+    this.legendText
+      .append('tspan')
+      .attr('x', this.size.W / 2 + (this.MARGIN_LEFT / 2))
+      .attr('text-anchor', 'middle')
+      .style('font-style', 'italic')
+      .text('Наведите на столбец, чтобы увидеть легенду')
+
   }
 
   private onMouseOver(data: DataGroupCount, selectedIndex: number, nodes: SVGRectElement[]) {
@@ -185,10 +198,11 @@ export class BarPlotComponent extends TwoAxisPlotComponent {
       spansSelection.exit().remove();
       spansSelection.enter()
         .append('tspan')
+        .merge(spansSelection as any)
         .attr('dy', (d, i) => i * 15)
         .attr('x', this.size.W / 2 + (this.MARGIN_LEFT / 2))
         .attr('text-anchor', 'middle')
-        .merge(spansSelection as any)
+        .style('font-style', 'normal')
         .text((d) => d);
     }
   }
@@ -201,7 +215,10 @@ export class BarPlotComponent extends TwoAxisPlotComponent {
       (mouseEvent.relatedTarget as Element).nodeName !== 'rect'
     ) {
       this.barsGroup.selectAll('rect').attr('opacity', 0.8);
-      this.legendText.selectAll('tspan').remove();
+      if (!this.showGroupNames) {
+        this.legendText.selectAll('tspan').remove();
+        this.showDefaultLegend();
+      }
     }
   }
 }

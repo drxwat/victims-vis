@@ -7,7 +7,8 @@ import { transition } from 'd3-transition';
 import { HorizontalAxisPlotComponent } from '../plot/horizontal-axis-plot.component';
 
 const WIDTH_OCCUPATION = 0.85;
-const BAR_HEIGHT_PART = 4; // 1/N
+const HEIGHT_OCCUPATION = 0.7;
+const BAR_HEIGHT_PART = 3; // 1/N
 
 @Component({
   selector: 'app-single-bar-plot',
@@ -45,7 +46,8 @@ export class SingleBarPlotComponent extends HorizontalAxisPlotComponent {
 
   constructor(componentEl: ElementRef) {
     super(componentEl, {
-      WIDTH_OCCUPATION
+      WIDTH_OCCUPATION,
+      HEIGHT_OCCUPATION
     });
 
     this.isReady.then(() => {
@@ -123,7 +125,7 @@ export class SingleBarPlotComponent extends HorizontalAxisPlotComponent {
       .attr('lengthAdjust', 'spacingAndGlyphs')
       .attr('textLength', this.innerSize.W * titleWidthFraqtion)
       .attr('x', this.innerSize.W / 2)
-      .attr('y', this.innerSize.H / 2)
+      .attr('y', this.MARGIN_TOP)
       .text(this.title)
   }
 }

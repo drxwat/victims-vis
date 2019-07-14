@@ -13,7 +13,7 @@ export abstract class HorizontalAxisPlotComponent extends PlotComponent {
 
     super(componentEl, {
       WIDTH_OCCUPATION: config && config.WIDTH_OCCUPATION,
-      HEIGHT_OCCUPATION: 1
+      HEIGHT_OCCUPATION: config && config.HEIGHT_OCCUPATION
     });
   }
 

@@ -9,6 +9,8 @@ import { PlotComponent, PlotConfiguration, Size } from './plot.component';
  */
 export abstract class TwoAxisPlotComponent extends PlotComponent {
 
+  protected axisX: Selection<SVGGElement, unknown, null, undefined>;
+  protected axisY: Selection<SVGGElement, unknown, null, undefined>;
   protected axisXSize: DOMRect;
   protected axisYSize: DOMRect;
   protected chartRoot: Selection<SVGGElement, unknown, null, undefined>;
@@ -32,19 +34,19 @@ export abstract class TwoAxisPlotComponent extends PlotComponent {
     scaleX: ScaleContinuousNumeric<any, any> | ScaleBand<any>,
     scaleY: ScaleContinuousNumeric<any, any> | ScaleBand<any>
   ) {
-    const axisX = this.plotRoot.append('g')
+    this.axisX = this.plotRoot.append('g')
       .call(axisBottom(scaleX).ticks(this.size.W / 30));
 
-    const axisY = this.plotRoot.append('g')
+    this.axisY = this.plotRoot.append('g')
       .call(axisLeft(scaleY).ticks(this.size.H / 25));
 
-    this.axisXSize = (axisX.node() as SVGGElement).getBBox();
-    this.axisYSize = (axisY.node() as SVGGElement).getBBox();
+    this.axisXSize = (this.axisX.node() as SVGGElement).getBBox();
+    this.axisYSize = (this.axisY.node() as SVGGElement).getBBox();
 
     const yWidth = this.axisYSize.width;
 
-    axisX.attr('transform', `translate(${yWidth + this.MARGIN_LEFT}, ${this.size.H - this.MARGIN_TOP})`);
-    axisY.attr('transform', `translate(${yWidth + this.MARGIN_LEFT}, ${this.MARGIN_TOP})`);
+    this.axisX.attr('transform', `translate(${yWidth + this.MARGIN_LEFT}, ${this.size.H - this.MARGIN_TOP})`);
+    this.axisY.attr('transform', `translate(${yWidth + this.MARGIN_LEFT}, ${this.MARGIN_TOP})`);
 
     this.chartRoot = this.plotRoot
       .append('g')

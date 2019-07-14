@@ -7,7 +7,7 @@ import { Transition, transition } from 'd3-transition';
 import { TwoAxisPlotComponent } from '../plot/two-axis-plot.component';
 
 const WIDTH_OCCUPATION = 0.8;
-const HEIGHT_OCCUPATION = 0.8;
+const HEIGHT_OCCUPATION = 0.7;
 
 @Component({
   selector: 'app-bar-plot',
@@ -19,7 +19,6 @@ export class BarPlotComponent extends TwoAxisPlotComponent {
   private _dataGroupsCount: DataGroupsCount = [];
 
   @Input() title: string = '';
-  @Input() isAbsolute = false;
   @Input() showGroupNames = false;
 
   @Input('dataGroupsCount')
@@ -27,11 +26,8 @@ export class BarPlotComponent extends TwoAxisPlotComponent {
     if (!value || value.length === 0) {
       return;
     }
-    if (this.isAbsolute) {
-      this._dataGroupsCount = value;
-      return;
-    }
     const sum = value.map((row) => row[1]).reduce((acc, val) => acc + val);
+    this.groupNamesMap = value.map((row) => row[0]);
     this._dataGroupsCount = value.map(
       (row, i) => [this.showGroupNames ? row[0] : `${i}`, row[1] / sum]
     );
@@ -45,6 +41,9 @@ export class BarPlotComponent extends TwoAxisPlotComponent {
   private scaleY: ScaleLinear<number, number>;
 
   private barsGroup: Selection<SVGGElement, unknown, null, undefined>;
+  private legendText: Selection<SVGTextElement, unknown, null, undefined>;
+
+  private groupNamesMap: string[] = [];
 
   constructor(componentEl: ElementRef) {
     super(componentEl, {
@@ -56,10 +55,14 @@ export class BarPlotComponent extends TwoAxisPlotComponent {
       this.initPlot();
       this.initScales(this.dataGroupsCount);
       this.drawAxises(this.scaleX, this.scaleY);
+      if (!this.showGroupNames) {
+        this.axisX.selectAll('text').style('display', 'none');
+      }
       this.initBars(this.dataGroupsCount);
       this.drawBars(this.dataGroupsCount.map((d) => [d[0], 0]), 0);
       this.drawBars(this.dataGroupsCount, ANIMATION_DURATION);
       this.drawTitle();
+      this.initLegend();
     });
   }
 
@@ -121,7 +124,7 @@ export class BarPlotComponent extends TwoAxisPlotComponent {
       .enter()
       .append("rect")
       .merge(rectSelection)
-      .on('mouseover', this.onMouseOver);
+      .on('mouseover', this.onMouseOver.bind(this));
 
     (transition.call(rectSelection) as Transition<SVGRectElement, DataGroupCount, null, undefined>)
       .selectAll(() => rectSelection.nodes())
@@ -140,6 +143,7 @@ export class BarPlotComponent extends TwoAxisPlotComponent {
   private drawTitle() {
     let titleWidthFraqtion = this.title.length * 10 / this.innerSize.W;
     titleWidthFraqtion = titleWidthFraqtion < 0.9 ? titleWidthFraqtion : 0.9;
+
     this.chartRoot
       .append('text')
       .attr('text-anchor', 'middle')
@@ -147,13 +151,46 @@ export class BarPlotComponent extends TwoAxisPlotComponent {
       .attr('textLength', this.innerSize.W * titleWidthFraqtion)
       .attr('x', this.innerSize.W / 2)
       .attr('y', 0)
-      .text(this.title)
+      .text(this.title);
+  }
+
+  private initLegend() {
+    this.legendText = this.plotRoot
+      .append('text')
+      .attr('y', this.size.H - (this.MARGIN_TOP / 2))
+      .style('font-size', '85%')
   }
 
   private onMouseOver(data: DataGroupCount, selectedIndex: number, nodes: SVGRectElement[]) {
     const selectedNode = [...nodes].splice(selectedIndex, 1)[0];
     selectAll(nodes).attr('opacity', 0.2);
     select(selectedNode).attr('opacity', 0.8);
+
+    if (!this.showGroupNames) {
+      const text = this.groupNamesMap[selectedIndex];
+      const textArr = text.split(' ');
+
+      let textData = [text];
+      if (textArr.length > 4) {
+        textData = [
+          textArr.splice(0, Math.round(textArr.length / 2)).join(' '),
+          textArr.join(' ')
+        ];
+      }
+
+      const spansSelection = this.legendText
+        .selectAll('tspan')
+        .data(textData);
+
+      spansSelection.exit().remove();
+      spansSelection.enter()
+        .append('tspan')
+        .attr('dy', (d, i) => i * 15)
+        .attr('x', this.size.W / 2 + (this.MARGIN_LEFT / 2))
+        .attr('text-anchor', 'middle')
+        .merge(spansSelection as any)
+        .text((d) => d);
+    }
   }
 
   private onMouseLeave(data: DataGroupCount, selectedIndex: number, nodes: SVGRectElement[]) {
@@ -164,6 +201,7 @@ export class BarPlotComponent extends TwoAxisPlotComponent {
       (mouseEvent.relatedTarget as Element).nodeName !== 'rect'
     ) {
       this.barsGroup.selectAll('rect').attr('opacity', 0.8);
+      this.legendText.selectAll('tspan').remove();
     }
   }
 }

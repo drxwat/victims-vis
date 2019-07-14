@@ -11,3 +11,15 @@ body {
 text {
   fill: #fff;
 }
+
+/* @keyframes question-mark-animation {
+  0%   { 
+    stroke-width: 0; 
+  }
+  40% { 
+    stroke-width: 2; 
+  }
+  100% { 
+    stroke-width: 0; 
+  }
+} */

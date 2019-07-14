@@ -11,7 +11,7 @@ declare type Density = [number, number][];
 declare type KernelDensityEstimator = (data: DataVector) => Density;
 
 const WIDTH_OCCUPATION = 0.8;
-const HEIGHT_OCCUPATION = 0.8;
+const HEIGHT_OCCUPATION = 0.7;
 
 
 @Component({

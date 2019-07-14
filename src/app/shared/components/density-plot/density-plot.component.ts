@@ -95,7 +95,7 @@ export class DensityPlotComponent extends TwoAxisPlotComponent {
     const values = density.map((d) => d[1]);
     const maxVal = max(values) as number;
     this.scaleY = scaleLinear()
-      .domain([0, maxVal + (0.10 * maxVal)])
+      .domain([0, maxVal + (0.20 * maxVal)])
       .range([this.size.H * HEIGHT_OCCUPATION, 0])
   }
 

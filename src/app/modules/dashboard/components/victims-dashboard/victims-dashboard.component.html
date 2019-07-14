@@ -36,7 +36,8 @@
     </app-density-plot>
   </mat-grid-tile>
   <mat-grid-tile rowspan="2">
-    <app-bar-plot [dataGroupsCount]="socialStatus$ | async" title="Социальный статус"></app-bar-plot>
+    <app-bar-plot [dataGroupsCount]="socialStatus$ | async" title="Социальный статус" showGroupNames="true">
+    </app-bar-plot>
   </mat-grid-tile>
 
 </mat-grid-list>

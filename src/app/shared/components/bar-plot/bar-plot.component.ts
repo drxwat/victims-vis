@@ -6,8 +6,6 @@ import { select, selectAll, Selection } from 'd3-selection';
 import { Transition, transition } from 'd3-transition';
 import { TwoAxisPlotComponent } from '../plot/two-axis-plot.component';
 
-// TODO: ADD GETTERS FOR NEW HEIGHT & WIDTH AFTER AXIS POSITIONING
-
 const WIDTH_OCCUPATION = 0.8;
 const HEIGHT_OCCUPATION = 0.8;
 
@@ -22,6 +20,7 @@ export class BarPlotComponent extends TwoAxisPlotComponent {
 
   @Input() title: string = '';
   @Input() isAbsolute = false;
+  @Input() showGroupNames = false;
 
   @Input('dataGroupsCount')
   set dataGroupsCount(value: DataGroupsCount) {
@@ -33,7 +32,9 @@ export class BarPlotComponent extends TwoAxisPlotComponent {
       return;
     }
     const sum = value.map((row) => row[1]).reduce((acc, val) => acc + val);
-    this._dataGroupsCount = value.map((row) => [row[0], row[1] / sum]);
+    this._dataGroupsCount = value.map(
+      (row, i) => [this.showGroupNames ? row[0] : `${i}`, row[1] / sum]
+    );
   };
 
   get dataGroupsCount() {
@@ -83,7 +84,7 @@ export class BarPlotComponent extends TwoAxisPlotComponent {
 
     const maxY = Math.max(...data.map((d) => d[1]));
     this.scaleY = scaleLinear()
-      .domain([0, maxY + (maxY * 0.10)])
+      .domain([0, maxY + (maxY * 0.20)])
       .range([this.size.H * HEIGHT_OCCUPATION, 0])
   }
 

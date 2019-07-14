@@ -7,7 +7,7 @@ import { transition } from 'd3-transition';
 import { HorizontalAxisPlotComponent } from '../plot/horizontal-axis-plot.component';
 
 const WIDTH_OCCUPATION = 0.85;
-const BAR_HEIGHT_PART = 6; // 1/N
+const BAR_HEIGHT_PART = 4; // 1/N
 
 @Component({
   selector: 'app-single-bar-plot',

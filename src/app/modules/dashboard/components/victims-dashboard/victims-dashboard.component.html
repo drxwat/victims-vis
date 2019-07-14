@@ -9,7 +9,7 @@
   </mat-form-field>
 </form>
 
-<mat-grid-list *ngIf="loaded$ | async" cols="3" rowHeight="4:1" gutterSize="15px">
+<mat-grid-list *ngIf="loaded$ | async" [cols]="gridColumns" rowHeight="4:1" gutterSize="15px">
   <!-- FIRST ROW -->
   <mat-grid-tile rowspan="2">
     <app-density-plot [dataVector]="age$ | async" title="Распределение возраста">

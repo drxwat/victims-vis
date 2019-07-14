@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, HostListener, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { dataEntriesToGroupsCountMap, groupsCountMapToDataBiGroupCount, groupsCountMapToOrderedDataGroupCount } from '@shared/app.data-helpers';
 import { EDUCATION_ORDERED, INCOME_ORDERED, SOCIAL_STATUS } from '@shared/app.data-meta';
@@ -72,6 +72,16 @@ export class VictimsDashboardComponent implements OnInit {
     crimeType: new FormControl()
   });
 
+  /**
+   * Layout
+   */
+
+  gridColumns: number = 3;
+
+  @HostListener('window:resize') onWindowResize() {
+    this.calculateGridsColumns();
+  }
+
   async ngOnInit() {
     const data = await csv<DataEntity, keyof DataEntity>('assets/web_subset.csv', {},
       (rawRow) => {
@@ -93,6 +103,8 @@ export class VictimsDashboardComponent implements OnInit {
       const subData = data.filter((row) => row.crime_type === filterValue['crimeType']);
       this.data$.next(subData);
     });
+
+    this.calculateGridsColumns();
   }
 
   private castToInt(value: string | 'NA') {
@@ -100,5 +112,16 @@ export class VictimsDashboardComponent implements OnInit {
       return +value;
     }
     return value;
+  }
+
+  private calculateGridsColumns() {
+    const windowWidth = window.innerWidth;
+    if (windowWidth <= 767) {
+      this.gridColumns = 1;
+    } else if (windowWidth <= 1024) {
+      this.gridColumns = 2;
+    } else {
+      this.gridColumns = 3;
+    }
   }
 }

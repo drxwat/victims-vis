@@ -17,7 +17,7 @@ const HEIGHT_OCCUPATION = 0.7;
 @Component({
   selector: 'app-density-plot',
   templateUrl: './density-plot.component.html',
-  styleUrls: ['./density-plot.component.css'],
+  styleUrls: ['./density-plot.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DensityPlotComponent extends TwoAxisPlotComponent {

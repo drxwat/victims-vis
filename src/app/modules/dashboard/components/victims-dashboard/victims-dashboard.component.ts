@@ -10,7 +10,7 @@ import { filter, map, take } from 'rxjs/operators';
 @Component({
   selector: 'app-victims-dashboard',
   templateUrl: './victims-dashboard.component.html',
-  styleUrls: ['./victims-dashboard.component.css'],
+  styleUrls: ['./victims-dashboard.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class VictimsDashboardComponent implements OnInit {

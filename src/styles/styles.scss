@@ -1,0 +1,18 @@
+@import '~@angular/material/theming';
+@import './colors';
+
+@include mat-core();
+
+$victims-app-primary: mat-palette($mat-teal, A700);
+$victims-app-accent:  mat-palette($mat-pink, A700);
+
+// The warn palette is optional (defaults to red).
+$victims-app-warn:    mat-palette($mat-red);
+
+// Create the theme object (a Sass map containing all of the palettes).
+$victims-app-theme: mat-dark-theme($victims-app-primary, $victims-app-accent, $victims-app-warn);
+
+// Include theme styles for core and each component used in your app.
+// Alternatively, you can import and @include the theme mixins for each component
+// that you are using.
+@include angular-material-theme($victims-app-theme);

@@ -12,7 +12,7 @@ const HEIGHT_OCCUPATION = 0.7;
 @Component({
   selector: 'app-bar-plot',
   templateUrl: './bar-plot.component.html',
-  styleUrls: ['./bar-plot.component.css']
+  styleUrls: ['./bar-plot.component.scss']
 })
 export class BarPlotComponent extends TwoAxisPlotComponent {
 

@@ -13,7 +13,7 @@ const BAR_HEIGHT_PART = 3; // 1/N
 @Component({
   selector: 'app-single-bar-plot',
   templateUrl: './single-bar-plot.component.html',
-  styleUrls: ['./single-bar-plot.component.css']
+  styleUrls: ['./single-bar-plot.component.scss']
 })
 export class SingleBarPlotComponent extends HorizontalAxisPlotComponent {
 

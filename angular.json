@@ -23,7 +23,7 @@
               "src/assets"
             ],
             "styles": [
-              "src/styles.css"
+              "src/main.scss"
             ],
             "scripts": []
           },
@@ -38,7 +38,7 @@
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
-              "extractCss": true,
+              "extractscss": true,
               "namedChunks": false,
               "aot": true,
               "extractLicenses": true,
@@ -83,7 +83,7 @@
               "src/assets"
             ],
             "styles": [
-              "src/styles.css"
+              "src/styles.scss"
             ],
             "scripts": []
           }
@@ -114,6 +114,7 @@
           }
         }
       }
-    }},
+    }
+  },
   "defaultProject": "victims-vis"
 }

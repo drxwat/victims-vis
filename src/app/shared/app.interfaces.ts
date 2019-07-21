@@ -6,6 +6,7 @@ export declare type CrimeType =
 
 export interface DataEntity {
   crime_type: CrimeType,
+  crime_place_grouped: string,
   resp_age: number,
   resp_is_male: '0' | '1',
   resp_income: string | 'NA',

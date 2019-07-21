@@ -68,8 +68,15 @@ export class VictimsDashboardComponent implements OnInit {
     map((d) => new Set(d.map((row) => row.crime_type)))
   );
 
+  crimePlaces$ = this.data$.pipe(
+    filter((d) => d.length > 0),
+    take(1),
+    map((d) => new Set(d.map((row) => row.crime_place_grouped)))
+  );
+
   filtersGroup = new FormGroup({
-    crimeType: new FormControl()
+    crime_type: new FormControl(),
+    crime_place_grouped: new FormControl()
   });
 
   /**
@@ -87,6 +94,7 @@ export class VictimsDashboardComponent implements OnInit {
       (rawRow) => {
         const entityRow: DataEntity = {
           crime_type: rawRow.crime_type as CrimeType,
+          crime_place_grouped: rawRow.crime_place_grouped as string,
           resp_age: +(rawRow.resp_age as string),
           resp_is_male: rawRow.resp_is_male as '0' | '1',
           resp_income: rawRow.resp_income as string,
@@ -99,12 +107,25 @@ export class VictimsDashboardComponent implements OnInit {
       });
     this.data$.next(data);
 
-    this.filtersGroup.valueChanges.subscribe((filterValue) => {
-      const subData = data.filter((row) => row.crime_type === filterValue['crimeType']);
+    this.filtersGroup.valueChanges.subscribe((filter) => {
+      const subData = data.filter(
+        (row) => {
+          for (const filterKey in filter) {
+            if (filter[filterKey] && row[filterKey] !== filter[filterKey]) {
+              return false;
+            }
+          }
+          return true;
+        }
+      );
       this.data$.next(subData);
     });
 
     this.calculateGridsColumns();
+  }
+
+  resetFilters() {
+    this.filtersGroup.reset();
   }
 
   private castToInt(value: string | 'NA') {

@@ -1,12 +1,24 @@
 <form [formGroup]="filtersGroup" class="filters">
-  <mat-form-field>
+  <mat-form-field class="filters-field">
     <mat-label>Тип преступления</mat-label>
-    <mat-select formControlName="crimeType">
-      <mat-option *ngFor="let crime of crimeTypes$ | async" [value]="crime">
-        {{crime}}
+    <mat-select formControlName="crime_type">
+      <mat-option *ngFor="let type of crimeTypes$ | async" [value]="type">
+        {{type}}
       </mat-option>
     </mat-select>
   </mat-form-field>
+  <mat-form-field class="filters-field">
+    <mat-label>Место преступления</mat-label>
+    <mat-select formControlName="crime_place_grouped">
+      <mat-option *ngFor="let place of crimePlaces$ | async" [value]="place">
+        {{place}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  <button mat-icon-button (click)="resetFilters()" class="filters-field">
+    <mat-icon>clear</mat-icon>
+  </button>
+
 </form>
 
 <mat-grid-list *ngIf="loaded$ | async" [cols]="gridColumns" rowHeight="4:1" gutterSize="25px">

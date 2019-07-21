@@ -14,7 +14,7 @@ export interface DataEntity {
   resp_place_is_city: '0' | '1' | 'NA',
   resp_edu: string,
   resp_ses: string,
-
+  episodes_amount: string
 }
 export declare type DataGroupCount = [string, number];
 export declare type DataGroupsCount = DataGroupCount[];

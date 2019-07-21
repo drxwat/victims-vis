@@ -38,6 +38,19 @@ export class VictimsDashboardComponent implements OnInit {
       .filter((p) => p < 100)
   }));
 
+  episodesAmount$ = this.data$.pipe(
+    map(dataEntriesToGroupsCountMap('episodes_amount')),
+    map((m) => {
+      return Array.from(m).filter(tuple => {
+        const amount = +tuple[0];
+        if (isNaN(amount)) {
+          return false;
+        }
+        return amount > 0 && amount < 6;
+      });
+    })
+  );
+
   isMale$ = this.data$.pipe(
     map(dataEntriesToGroupsCountMap('resp_is_male')),
     map(groupsCountMapToDataBiGroupCount('Женщины', 'Мужчины'))
@@ -101,7 +114,8 @@ export class VictimsDashboardComponent implements OnInit {
           resp_place_population: this.castToInt(rawRow.resp_place_population as string),
           resp_place_is_city: rawRow.resp_place_is_city as '0' | '1' | 'NA',
           resp_edu: rawRow.resp_edu as string,
-          resp_ses: rawRow.resp_ses as string
+          resp_ses: rawRow.resp_ses as string,
+          episodes_amount: rawRow.episodes_amount as string
         };
         return entityRow;
       });

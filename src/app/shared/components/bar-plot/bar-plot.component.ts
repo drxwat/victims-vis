@@ -29,7 +29,7 @@ export class BarPlotComponent extends TwoAxisPlotComponent {
     const sum = value.map((row) => row[1]).reduce((acc, val) => acc + val);
     this.groupNamesMap = value.map((row) => row[0]);
     this._dataGroupsCount = value.map(
-      (row, i) => [this.showGroupNames ? row[0] : `${i}`, row[1] / sum]
+      (row, i) => [this.showGroupNames ? row[0] : `${i}`, (row[1] / sum) * 100]
     );
   };
 
@@ -161,7 +161,7 @@ export class BarPlotComponent extends TwoAxisPlotComponent {
   private initLegend() {
     this.legendText = this.plotRoot
       .append('text')
-      .attr('y', this.size.H - this.MARGIN_BOTTOM)
+      .attr('y', this.innerSize.H + this.axisXSize.height + (this.MARGIN_BOTTOM / 2))
       .style('font-size', '85%');
     this.showDefaultLegend();
   }

@@ -32,7 +32,7 @@ export class SingleBarPlotComponent extends HorizontalAxisPlotComponent {
       return;
     }
     const sum = this.getDataSum(value);
-    this._dataBiGroupCount = value.map((row) => [row[0], row[1] / sum]) as DataBiGroupCount;
+    this._dataBiGroupCount = value.map((row) => [row[0], (row[1] / sum) * 100]) as DataBiGroupCount;
   };
 
   get dataBiGroupCount() {
@@ -48,8 +48,8 @@ export class SingleBarPlotComponent extends HorizontalAxisPlotComponent {
     super(componentEl, {
       MARGIN_TOP: DEFAULT_MARGIN_TOP,
       MARGIN_RIGHT: DEFAULT_MARGIN_RIGHT,
-      MARGIN_BOTTOM: DEFAULT_MARGIN_BOTTOM,
-      MARGIN_LEFT: DEFAULT_MARGIN_LEFT
+      MARGIN_BOTTOM: DEFAULT_MARGIN_BOTTOM + 0.05,
+      MARGIN_LEFT: 0.01
     });
 
     this.isReady.then(() => {

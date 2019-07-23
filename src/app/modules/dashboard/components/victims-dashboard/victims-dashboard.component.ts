@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, HostListener, OnInit } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { AbstractControl, FormControl, FormGroup } from '@angular/forms';
 import { dataEntriesToGroupsCountMap, groupsCountMapToDataBiGroupCount, groupsCountMapToOrderedDataGroupCount } from '@shared/app.data-helpers';
 import { EDUCATION_ORDERED, INCOME_ORDERED, SOCIAL_STATUS } from '@shared/app.data-meta';
 import { CrimeType, DataEntity } from '@shared/app.interfaces';
@@ -17,6 +17,7 @@ export class VictimsDashboardComponent implements OnInit {
 
   private data$ = new BehaviorSubject<DataEntity[]>([]);
 
+  number$ = this.data$.pipe(map((d) => d.length));
   loaded$ = this.data$.pipe(map((d) => !!d));
 
   /**
@@ -132,6 +133,11 @@ export class VictimsDashboardComponent implements OnInit {
 
   resetFilters() {
     this.filtersGroup.reset();
+  }
+
+  isDisablingEnabled(groupName: string) {
+    const control = this.filtersGroup.get(groupName) as AbstractControl;
+    return !control.value;
   }
 
   private castToInt(value: string | 'NA') {

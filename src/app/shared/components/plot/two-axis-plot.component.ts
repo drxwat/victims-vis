@@ -38,7 +38,7 @@ export abstract class TwoAxisPlotComponent extends PlotComponent {
       .call(axisBottom(scaleX).ticks(this.size.W / 30));
 
     this.axisY = this.plotRoot.append('g')
-      .call(axisLeft(scaleY).ticks(this.size.H / 25));
+      .call(axisLeft(scaleY).ticks(this.size.H / 50));
 
     this.axisXSize = (this.axisX.node() as SVGGElement).getBBox();
     this.axisYSize = (this.axisY.node() as SVGGElement).getBBox();

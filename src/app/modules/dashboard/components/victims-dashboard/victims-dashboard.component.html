@@ -1,3 +1,4 @@
+<p class="absolute-count">N = {{ number$ | async }}</p>
 <form [formGroup]="filtersGroup" class="filters">
   <mat-form-field class="filters-field">
     <mat-label>Тип преступления</mat-label>
@@ -18,7 +19,6 @@
   <button mat-icon-button (click)="resetFilters()" class="filters-field">
     <mat-icon>clear</mat-icon>
   </button>
-
 </form>
 
 <mat-grid-list *ngIf="loaded$ | async" [cols]="gridColumns" rowHeight="4:1" gutterSize="25px">

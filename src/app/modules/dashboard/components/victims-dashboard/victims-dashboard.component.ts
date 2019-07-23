@@ -30,14 +30,6 @@ export class VictimsDashboardComponent implements OnInit {
     map(groupsCountMapToOrderedDataGroupCount(INCOME_ORDERED))
   );
 
-  population$ = this.data$.pipe(map((d) => {
-    return d
-      .map((row) => row.resp_place_population)
-      .filter((p) => p !== 'NA')
-      .map((p) => p as number / 100000)
-      .filter((p) => p < 100)
-  }));
-
   episodesAmount$ = this.data$.pipe(
     map(dataEntriesToGroupsCountMap('episodes_amount')),
     map((m) => {
@@ -48,7 +40,8 @@ export class VictimsDashboardComponent implements OnInit {
         }
         return amount > 0 && amount < 6;
       });
-    })
+    }),
+    map((m) => m.sort((a, b) => (+a[0]) - (+b[0])))
   );
 
   isMale$ = this.data$.pipe(
@@ -111,7 +104,6 @@ export class VictimsDashboardComponent implements OnInit {
           resp_age: +(rawRow.resp_age as string),
           resp_is_male: rawRow.resp_is_male as '0' | '1',
           resp_income: rawRow.resp_income as string,
-          resp_place_population: this.castToInt(rawRow.resp_place_population as string),
           resp_place_is_city: rawRow.resp_place_is_city as '0' | '1' | 'NA',
           resp_edu: rawRow.resp_edu as string,
           resp_ses: rawRow.resp_ses as string,

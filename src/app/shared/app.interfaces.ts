@@ -10,7 +10,6 @@ export interface DataEntity {
   resp_age: number,
   resp_is_male: '0' | '1',
   resp_income: string | 'NA',
-  resp_place_population: number | 'NA',
   resp_place_is_city: '0' | '1' | 'NA',
   resp_edu: string,
   resp_ses: string,

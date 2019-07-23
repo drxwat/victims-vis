@@ -44,8 +44,9 @@
     </app-bar-plot>
   </mat-grid-tile>
   <mat-grid-tile rowspan="2">
-    <app-density-plot [dataVector]="population$ | async" title="Население">
-    </app-density-plot>
+    <app-bar-plot [dataGroupsCount]="episodesAmount$ | async" title="Кол-во эпизодов (не более 5 шт) за 5 лет"
+      showGroupNames="true">
+    </app-bar-plot>
   </mat-grid-tile>
   <mat-grid-tile rowspan="2">
     <app-bar-plot [dataGroupsCount]="socialStatus$ | async" title="Социальный статус" showGroupNames="true">

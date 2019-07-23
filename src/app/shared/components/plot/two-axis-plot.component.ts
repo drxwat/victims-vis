@@ -19,8 +19,8 @@ export abstract class TwoAxisPlotComponent extends PlotComponent {
   protected get innerSize() {
     if (!this.__innerSize) {
       this.__innerSize = {
-        W: this.size.W - (this.MARGIN_LEFT * 2) - this.axisYSize.width,
-        H: this.size.H - (this.MARGIN_TOP * 2)
+        W: this.size.W - (this.MARGIN_LEFT + this.MARGIN_RIGHT) - this.axisYSize.width,
+        H: this.size.H - (this.MARGIN_TOP + this.MARGIN_BOTTOM)
       };
     }
     return this.__innerSize;
@@ -45,7 +45,7 @@ export abstract class TwoAxisPlotComponent extends PlotComponent {
 
     const yWidth = this.axisYSize.width;
 
-    this.axisX.attr('transform', `translate(${yWidth + this.MARGIN_LEFT}, ${this.size.H - this.MARGIN_TOP})`);
+    this.axisX.attr('transform', `translate(${yWidth + this.MARGIN_LEFT}, ${this.size.H - this.MARGIN_BOTTOM})`);
     this.axisY.attr('transform', `translate(${yWidth + this.MARGIN_LEFT}, ${this.MARGIN_TOP})`);
 
     this.chartRoot = this.plotRoot

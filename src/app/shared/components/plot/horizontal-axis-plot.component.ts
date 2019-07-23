@@ -11,10 +11,7 @@ export abstract class HorizontalAxisPlotComponent extends PlotComponent {
 
   constructor(componentEl: ElementRef, protected config?: PlotConfiguration) {
 
-    super(componentEl, {
-      WIDTH_OCCUPATION: config && config.WIDTH_OCCUPATION,
-      HEIGHT_OCCUPATION: config && config.HEIGHT_OCCUPATION
-    });
+    super(componentEl, config);
   }
 
   protected drawAxis(
@@ -24,7 +21,8 @@ export abstract class HorizontalAxisPlotComponent extends PlotComponent {
 
     this.axisXSize = (axisX.node() as SVGGElement).getBBox();
 
-    axisX.attr('transform', `translate(${this.MARGIN_LEFT}, ${this.size.H - this.MARGIN_TOP - this.axisXSize.height})`);
+    // axisX.attr('transform', `translate(${this.MARGIN_LEFT}, ${this.size.H - this.MARGIN_BOTTOM})`);
+    axisX.attr('transform', `translate(${this.MARGIN_LEFT}, ${this.size.H - this.MARGIN_BOTTOM - this.axisXSize.height})`);
 
     this.chartRoot = this.plotRoot
       .append('g')

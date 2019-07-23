@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, ElementRef, Input, SimpleChanges } from '@angular/core';
-import { ANIMATION_DURATION } from '@shared/app.constants';
+import { ANIMATION_DURATION, DEFAULT_MARGIN_BOTTOM, DEFAULT_MARGIN_LEFT, DEFAULT_MARGIN_RIGHT, DEFAULT_MARGIN_TOP } from '@shared/app.constants';
 import { max, mean } from 'd3-array';
 import { ScaleLinear, scaleLinear } from 'd3-scale';
 import { curveBasis, line } from 'd3-shape';
@@ -10,9 +10,8 @@ export declare type DataVector = number[];
 declare type Density = [number, number][];
 declare type KernelDensityEstimator = (data: DataVector) => Density;
 
-const WIDTH_OCCUPATION = 0.8;
-const HEIGHT_OCCUPATION = 0.7;
-
+const WIDTH_OCCUPATION = 1 - (DEFAULT_MARGIN_LEFT + DEFAULT_MARGIN_RIGHT);
+const HEIGHT_OCCUPATION = 1 - (DEFAULT_MARGIN_TOP + DEFAULT_MARGIN_BOTTOM);
 
 @Component({
   selector: 'app-density-plot',
@@ -35,8 +34,10 @@ export class DensityPlotComponent extends TwoAxisPlotComponent {
 
   constructor(componentEl: ElementRef) {
     super(componentEl, {
-      WIDTH_OCCUPATION,
-      HEIGHT_OCCUPATION
+      MARGIN_TOP: DEFAULT_MARGIN_TOP,
+      MARGIN_RIGHT: DEFAULT_MARGIN_RIGHT,
+      MARGIN_BOTTOM: DEFAULT_MARGIN_BOTTOM,
+      MARGIN_LEFT: DEFAULT_MARGIN_LEFT
     });
 
     this.isReady.then(() => {

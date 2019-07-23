@@ -1,13 +1,13 @@
 import { Component, ElementRef, Input, SimpleChanges } from '@angular/core';
-import { ANIMATION_DURATION } from '@shared/app.constants';
+import { ANIMATION_DURATION, DEFAULT_MARGIN_BOTTOM, DEFAULT_MARGIN_LEFT, DEFAULT_MARGIN_RIGHT, DEFAULT_MARGIN_TOP } from '@shared/app.constants';
 import { DataGroupCount, DataGroupsCount } from '@shared/app.interfaces';
 import { ScaleBand, scaleBand, ScaleLinear, scaleLinear } from 'd3-scale';
 import { select, selectAll, Selection } from 'd3-selection';
 import { Transition, transition } from 'd3-transition';
 import { TwoAxisPlotComponent } from '../plot/two-axis-plot.component';
 
-const WIDTH_OCCUPATION = 0.8;
-const HEIGHT_OCCUPATION = 0.7;
+const WIDTH_OCCUPATION = 1 - (DEFAULT_MARGIN_LEFT + DEFAULT_MARGIN_RIGHT);
+const HEIGHT_OCCUPATION = 1 - (DEFAULT_MARGIN_TOP + DEFAULT_MARGIN_BOTTOM);
 
 @Component({
   selector: 'app-bar-plot',
@@ -47,8 +47,10 @@ export class BarPlotComponent extends TwoAxisPlotComponent {
 
   constructor(componentEl: ElementRef) {
     super(componentEl, {
-      WIDTH_OCCUPATION,
-      HEIGHT_OCCUPATION
+      MARGIN_TOP: DEFAULT_MARGIN_TOP,
+      MARGIN_RIGHT: DEFAULT_MARGIN_RIGHT,
+      MARGIN_BOTTOM: DEFAULT_MARGIN_BOTTOM,
+      MARGIN_LEFT: DEFAULT_MARGIN_LEFT
     });
 
     this.isReady.then(() => {
@@ -159,7 +161,7 @@ export class BarPlotComponent extends TwoAxisPlotComponent {
   private initLegend() {
     this.legendText = this.plotRoot
       .append('text')
-      .attr('y', this.size.H - (this.MARGIN_TOP / 2))
+      .attr('y', this.size.H - this.MARGIN_BOTTOM)
       .style('font-size', '85%');
     this.showDefaultLegend();
   }
@@ -167,7 +169,7 @@ export class BarPlotComponent extends TwoAxisPlotComponent {
   private showDefaultLegend() {
     this.legendText
       .append('tspan')
-      .attr('x', this.size.W / 2 + (this.MARGIN_LEFT / 2))
+      .attr('x', this.size.W / 2 + this.MARGIN_LEFT)
       .attr('text-anchor', 'middle')
       .style('font-style', 'italic')
       .text('Наведите на столбец, чтобы увидеть легенду')
@@ -200,7 +202,7 @@ export class BarPlotComponent extends TwoAxisPlotComponent {
         .append('tspan')
         .merge(spansSelection as any)
         .attr('dy', (d, i) => i * 15)
-        .attr('x', this.size.W / 2 + (this.MARGIN_LEFT / 2))
+        .attr('x', this.size.W / 2 + this.MARGIN_LEFT)
         .attr('text-anchor', 'middle')
         .style('font-style', 'normal')
         .text((d) => d);

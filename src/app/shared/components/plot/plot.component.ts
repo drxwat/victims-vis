@@ -50,20 +50,6 @@ export abstract class PlotComponent implements AfterViewInit, OnChanges {
   private dataIsReady: () => void;
   private viewIsReady: () => void;
 
-  // /**
-  //  * @deprecated
-  //  */
-  // protected get WIDTH_OCCUPATION() {
-  //   return this.config && this.config.WIDTH_OCCUPATION || 1;
-  // }
-
-  // /**
-  //  * @deprecated
-  //  */
-  // protected get HEIGHT_OCCUPATION() {
-  //   return this.config && this.config.HEIGHT_OCCUPATION || 1;
-  // }
-
   protected get MARGIN_TOP() {
     return this.getFraction(this.size.H, (this.config && this.config.MARGIN_TOP) || 0);
   }
@@ -79,14 +65,6 @@ export abstract class PlotComponent implements AfterViewInit, OnChanges {
   protected get MARGIN_LEFT() {
     return this.getFraction(this.size.W, (this.config && this.config.MARGIN_LEFT) || 0);
   }
-
-  // protected get MARGIN_HORIZONTAL() {
-  //   return (this.size.W - (this.size.W * (this.MARGIN_LEFT + this.MARGIN_RIGHT))) / 2;
-  // }
-
-  // protected get MARGIN_VERTICAL() {
-  //   return (this.size.H - (this.size.H * (this.MARGIN_TOP + this.MARGIN_BOTTOM))) / 2;
-  // }
 
   constructor(
     private componentEl: ElementRef,

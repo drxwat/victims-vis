@@ -5,7 +5,7 @@ import { EDUCATION_ORDERED, INCOME_ORDERED, SOCIAL_STATUS } from '@shared/app.da
 import { CrimeType, DataEntity } from '@shared/app.interfaces';
 import { csv } from 'd3-fetch';
 import { BehaviorSubject } from 'rxjs';
-import { filter, map, take } from 'rxjs/operators';
+import { combineLatest, filter, map, take } from 'rxjs/operators';
 
 @Component({
   selector: 'app-victims-dashboard',
@@ -17,7 +17,17 @@ export class VictimsDashboardComponent implements OnInit {
 
   private data$ = new BehaviorSubject<DataEntity[]>([]);
 
-  number$ = this.data$.pipe(map((d) => d.length));
+  dataAbsoluteCount$ = this.data$.pipe(
+    filter((d) => d.length > 0),
+    take(1),
+    map((d) => d.length)
+  )
+
+  dataCount$ = this.data$.pipe(map((d) => d.length));
+  dataPercentage$ = this.dataCount$.pipe(
+    combineLatest(this.dataAbsoluteCount$),
+    map(([cnt, abs]) => Number(cnt / abs * 100).toFixed(2))
+  )
   loaded$ = this.data$.pipe(map((d) => !!d));
 
   /**

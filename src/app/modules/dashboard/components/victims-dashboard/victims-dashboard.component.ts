@@ -81,6 +81,14 @@ export class VictimsDashboardComponent implements OnInit {
     map((d) => new Set(d.map((row) => row.crime_place_grouped)))
   );
 
+  crimeTypesCount$ = this.data$.pipe(
+    map(dataEntriesToGroupsCountMap('crime_type'))
+  );
+
+  crimePlacesCount$ = this.data$.pipe(
+    map(dataEntriesToGroupsCountMap('crime_place_grouped'))
+  );
+
   filtersGroup = new FormGroup({
     crime_type: new FormControl(),
     crime_place_grouped: new FormControl()
@@ -135,16 +143,8 @@ export class VictimsDashboardComponent implements OnInit {
     this.filtersGroup.reset();
   }
 
-  isDisablingEnabled(groupName: string) {
-    const control = this.filtersGroup.get(groupName) as AbstractControl;
-    return !control.value;
-  }
-
-  private castToInt(value: string | 'NA') {
-    if (value !== 'NA') {
-      return +value;
-    }
-    return value;
+  isFilterHasValue(groupName: string) {
+    return !!(this.filtersGroup.get(groupName) as AbstractControl).value;
   }
 
   private calculateGridsColumns() {

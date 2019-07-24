@@ -3,7 +3,8 @@
   <mat-form-field class="filters-field">
     <mat-label>Тип преступления</mat-label>
     <mat-select formControlName="crime_type">
-      <mat-option *ngFor="let type of crimeTypes$ | async" [value]="type">
+      <mat-option *ngFor="let type of crimeTypes$ | async"
+        [disabled]="!isFilterHasValue('crime_type') && !(crimeTypesCount$ | async).has(type)" [value]="type">
         {{type}}
       </mat-option>
     </mat-select>
@@ -11,7 +12,9 @@
   <mat-form-field class="filters-field">
     <mat-label>Место преступления</mat-label>
     <mat-select formControlName="crime_place_grouped">
-      <mat-option *ngFor="let place of crimePlaces$ | async" [value]="place">
+      <mat-option *ngFor="let place of crimePlaces$ | async"
+        [disabled]="!isFilterHasValue('crime_place_grouped') && !(crimePlacesCount$ | async).has(place)"
+        [value]="place">
         {{place}}
       </mat-option>
     </mat-select>

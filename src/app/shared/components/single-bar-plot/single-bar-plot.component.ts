@@ -1,5 +1,5 @@
 import { Component, ElementRef, Input, SimpleChanges } from '@angular/core';
-import { ANIMATION_DURATION, DEFAULT_MARGIN_BOTTOM, DEFAULT_MARGIN_LEFT, DEFAULT_MARGIN_RIGHT, DEFAULT_MARGIN_TOP } from '@shared/app.constants';
+import { ANIMATION_DURATION, DEFAULT_MARGIN_BOTTOM, DEFAULT_MARGIN_LEFT, DEFAULT_MARGIN_RIGHT, DEFAULT_MARGIN_TOP, ESTIMATED_AXIS_FRAQ } from '@shared/app.constants';
 import { DataBiGroupCount, DataGroupCount } from '@shared/app.interfaces';
 import { ScaleLinear, scaleLinear } from 'd3-scale';
 import { Selection } from 'd3-selection';
@@ -49,7 +49,7 @@ export class SingleBarPlotComponent extends HorizontalAxisPlotComponent {
       MARGIN_TOP: DEFAULT_MARGIN_TOP,
       MARGIN_RIGHT: DEFAULT_MARGIN_RIGHT,
       MARGIN_BOTTOM: DEFAULT_MARGIN_BOTTOM + 0.05,
-      MARGIN_LEFT: 0.01
+      MARGIN_LEFT: DEFAULT_MARGIN_LEFT + 0.05
     });
 
     this.isReady.then(() => {
@@ -81,7 +81,7 @@ export class SingleBarPlotComponent extends HorizontalAxisPlotComponent {
   private initScale(data: DataBiGroupCount) {
     this.scaleX = scaleLinear()
       .domain([0, this.getDataSum(data)])
-      .range([0, this.size.W * WIDTH_OCCUPATION]);
+      .range([0, this.size.W * (WIDTH_OCCUPATION - ESTIMATED_AXIS_FRAQ)]);
   }
 
   private getDataSum(data: DataBiGroupCount) {
@@ -97,7 +97,7 @@ export class SingleBarPlotComponent extends HorizontalAxisPlotComponent {
       .append('rect')
       .attr('x', 0)
       .attr('y', barY)
-      .attr('width', this.size.W * WIDTH_OCCUPATION)
+      .attr('width', this.size.W * (WIDTH_OCCUPATION - ESTIMATED_AXIS_FRAQ))
       .attr('height', barHeight)
       .attr("fill", "#fff");
 

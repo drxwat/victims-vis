@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, ElementRef, Input, SimpleChanges } from '@angular/core';
-import { ANIMATION_DURATION, DEFAULT_MARGIN_BOTTOM, DEFAULT_MARGIN_LEFT, DEFAULT_MARGIN_RIGHT, DEFAULT_MARGIN_TOP } from '@shared/app.constants';
+import { ANIMATION_DURATION, DEFAULT_MARGIN_BOTTOM, DEFAULT_MARGIN_LEFT, DEFAULT_MARGIN_RIGHT, DEFAULT_MARGIN_TOP, ESTIMATED_AXIS_FRAQ as DEFAULT_ESTIMATED_AXIS_FRAQ } from '@shared/app.constants';
 import { max, mean } from 'd3-array';
 import { ScaleLinear, scaleLinear } from 'd3-scale';
 import { curveBasis, line } from 'd3-shape';
@@ -12,6 +12,8 @@ declare type KernelDensityEstimator = (data: DataVector) => Density;
 
 const WIDTH_OCCUPATION = 1 - (DEFAULT_MARGIN_LEFT + DEFAULT_MARGIN_RIGHT);
 const HEIGHT_OCCUPATION = 1 - (DEFAULT_MARGIN_TOP + DEFAULT_MARGIN_BOTTOM);
+
+const ESTIMATED_AXIS_FRAQ = DEFAULT_ESTIMATED_AXIS_FRAQ * 1.5;
 
 @Component({
   selector: 'app-density-plot',
@@ -88,8 +90,8 @@ export class DensityPlotComponent extends TwoAxisPlotComponent {
   private initScaleX(data: DataVector) {
     const maxVal = max(data) as number;
     this.scaleX = scaleLinear()
-      .domain([0, maxVal + (0.10 * maxVal)])
-      .range([0, this.size.W * WIDTH_OCCUPATION]);
+      .domain([0, maxVal])
+      .range([0, this.size.W * (WIDTH_OCCUPATION - ESTIMATED_AXIS_FRAQ)]);
   }
 
   private initScaleY(density: Density) {
@@ -127,7 +129,7 @@ export class DensityPlotComponent extends TwoAxisPlotComponent {
       .y((d) => this.scaleY(d[1]))(density) as string;
 
     // Forcing line to go by X axis
-    ln = `M 0,${this.innerSize.H} L${ln.substring(1)} L ${this.size.W * WIDTH_OCCUPATION},${this.innerSize.H}`;
+    ln = `M 0,${this.innerSize.H} L${ln.substring(1)} L ${this.size.W * (WIDTH_OCCUPATION - ESTIMATED_AXIS_FRAQ)},${this.innerSize.H}`;
 
     transition.call(this.plotCurve.datum(density))
       .select(() => this.plotCurve.node())

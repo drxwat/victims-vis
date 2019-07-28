@@ -1,5 +1,5 @@
 import { Component, ElementRef, Input, SimpleChanges } from '@angular/core';
-import { ANIMATION_DURATION, DEFAULT_MARGIN_BOTTOM, DEFAULT_MARGIN_LEFT, DEFAULT_MARGIN_RIGHT, DEFAULT_MARGIN_TOP } from '@shared/app.constants';
+import { ANIMATION_DURATION, DEFAULT_MARGIN_BOTTOM, DEFAULT_MARGIN_LEFT, DEFAULT_MARGIN_RIGHT, DEFAULT_MARGIN_TOP, ESTIMATED_AXIS_FRAQ } from '@shared/app.constants';
 import { DataGroupCount, DataGroupsCount } from '@shared/app.interfaces';
 import { ScaleBand, scaleBand, ScaleLinear, scaleLinear } from 'd3-scale';
 import { select, selectAll, Selection } from 'd3-selection';
@@ -86,13 +86,13 @@ export class BarPlotComponent extends TwoAxisPlotComponent {
   private initScales(data: DataGroupsCount) {
     this.scaleX = scaleBand()
       .domain(data.map((d) => d[0]))
-      .range([0, this.size.W * WIDTH_OCCUPATION])
+      .range([0, this.size.W * (WIDTH_OCCUPATION - ESTIMATED_AXIS_FRAQ)])
       .padding(0.2)
 
     const maxY = Math.max(...data.map((d) => d[1]));
     this.scaleY = scaleLinear()
       .domain([0, maxY + (maxY * 0.20)])
-      .range([this.size.H * HEIGHT_OCCUPATION, 0])
+      .range([this.size.H * (HEIGHT_OCCUPATION), 0])
   }
 
   private initBars(data: DataGroupsCount) {

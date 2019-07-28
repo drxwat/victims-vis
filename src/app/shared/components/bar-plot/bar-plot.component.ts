@@ -41,6 +41,7 @@ export class BarPlotComponent extends TwoAxisPlotComponent {
   private scaleY: ScaleLinear<number, number>;
 
   private legendText: Selection<SVGTextElement, unknown, null, undefined>;
+  private percentagesGroup: Selection<SVGGElement, unknown, null, undefined>;
 
   private groupNamesMap: string[] = [];
 
@@ -60,9 +61,13 @@ export class BarPlotComponent extends TwoAxisPlotComponent {
         this.axisX.selectAll('text').style('display', 'none');
       }
       this.plotRoot.on('mouseleave', this.onMouseLeave.bind(this));
+
       this.drawBars(this.dataGroupsCount.map((d) => [d[0], 0]), 0);
+      this.initPercentages();
+      this.drawPercentages(this.dataGroupsCount.map((d) => [d[0], 0]), 0);
       this.drawBars(this.dataGroupsCount, ANIMATION_DURATION);
-      this.drawTitle();
+      this.drawPercentages(this.dataGroupsCount, ANIMATION_DURATION);
+      // this.drawTitle();
       if (!this.showGroupNames) {
         this.initLegend();
       }
@@ -74,6 +79,7 @@ export class BarPlotComponent extends TwoAxisPlotComponent {
 
     if (this.isInitialized && this.isInputDataValid(changes)) {
       this.drawBars(this.dataGroupsCount, ANIMATION_DURATION);
+      this.drawPercentages(this.dataGroupsCount, ANIMATION_DURATION);
     }
   }
 
@@ -120,6 +126,33 @@ export class BarPlotComponent extends TwoAxisPlotComponent {
       .attr('opacity', 0.8);
   }
 
+  private initPercentages() {
+    this.percentagesGroup = this.chartRoot.append('g');
+  }
+
+  private drawPercentages(data: DataGroupsCount, duration = 0) {
+    let textSelection = this.percentagesGroup.selectAll<SVGTextElement, unknown>("text")
+      .data(data, (d: DataGroupCount) => d[0]);
+
+    textSelection.exit().remove();
+
+    textSelection = textSelection
+      .enter()
+      .append("text")
+      .merge(textSelection);
+
+    (transition.call(textSelection) as Transition<SVGRectElement, DataGroupCount, null, undefined>)
+      .selectAll(() => textSelection.nodes())
+      .duration(duration)
+      .delay((_, i) => i * 100)
+      .attr("x", (d: DataGroupCount) => (this.scaleX(d[0]) as number) + (this.scaleX.bandwidth() / 2))
+      .attr("y", this.getBarTextOrdinate.bind(this))
+      .attr('lengthAdjust', 'spacingAndGlyphs')
+      .attr('text-anchor', 'middle')
+      .style('font-size', '85%')
+      .text((d: DataGroupCount) => d[1].toFixed(2) + '%')
+  }
+
   private drawTitle() {
     let titleWidthFraqtion = this.title.length * 10 / this.innerSize.W;
     titleWidthFraqtion = titleWidthFraqtion < 0.9 ? titleWidthFraqtion : 0.9;
@@ -156,6 +189,11 @@ export class BarPlotComponent extends TwoAxisPlotComponent {
     selectAll(nodes).attr('opacity', 0.2);
     select(selectedNode).attr('opacity', 0.8);
 
+    const textNodes = Array.from((this.percentagesGroup.node() as SVGGElement).children);
+    const selectedText = textNodes.splice(selectedIndex, 1)[0];
+    selectAll(textNodes).attr('opacity', 0.2);
+    select(selectedText).attr('opacity', 1);
+
     if (!this.showGroupNames) {
       const text = this.groupNamesMap[selectedIndex];
       const textArr = text.split(' ');
@@ -186,9 +224,22 @@ export class BarPlotComponent extends TwoAxisPlotComponent {
 
   private onMouseLeave(data: DataGroupCount, selectedIndex: number, nodes: SVGRectElement[]) {
     this.chartRoot.selectAll('rect').attr('opacity', 0.8);
+    selectAll(Array.from((this.percentagesGroup.node() as SVGGElement).children))
+      .attr('opacity', 1);
     if (!this.showGroupNames) {
       this.legendText.selectAll('tspan').remove();
       this.showDefaultLegend();
     }
+  }
+
+  private getBarTextOrdinate(data: DataGroupCount) {
+    const percentage = data[1];
+    const barH = this.innerSize.H - this.scaleY(percentage);
+
+    if (percentage > 15) {
+      return this.innerSize.H - (barH / 2);
+    }
+    return this.innerSize.H - barH - (this.innerSize.H * 0.05);
+
   }
 }

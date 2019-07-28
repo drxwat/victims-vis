@@ -236,7 +236,7 @@ export class BarPlotComponent extends TwoAxisPlotComponent {
     const percentage = data[1];
     const barH = this.innerSize.H - this.scaleY(percentage);
 
-    if (percentage > 15) {
+    if (percentage > (this.scaleY.domain()[1] * 0.85)) {
       return this.innerSize.H - (barH / 2);
     }
     return this.innerSize.H - barH - (this.innerSize.H * 0.05);

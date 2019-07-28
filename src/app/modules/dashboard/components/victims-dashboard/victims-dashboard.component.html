@@ -1,5 +1,7 @@
-<p class="absolute-count">N = {{ dataCount$ | async }} P = {{ dataPercentage$ | async }}%</p>
-
+<div class="absolute-count">
+  <span>N = {{ dataCount$ | async }}</span>
+  <span>P = {{ dataPercentage$ | async }}%</span>
+</div>
 <form [formGroup]="filtersGroup" class="filters">
   <mat-form-field class="filters-field">
     <mat-label>Тип преступления</mat-label>
@@ -28,34 +30,34 @@
 <mat-grid-list *ngIf="loaded$ | async" [cols]="gridColumns" rowHeight="4:1" gutterSize="25px">
   <!-- FIRST ROW -->
   <mat-grid-tile>
-    <app-single-bar-plot [dataBiGroupCount]="isMale$ | async" title="Соотношение мужчин и женщин, %">
+    <app-single-bar-plot [dataBiGroupCount]="isMale$ | async" plotTitle="Соотношение мужчин и женщин, %">
     </app-single-bar-plot>
   </mat-grid-tile>
   <mat-grid-tile rowspan="2">
-    <app-bar-plot [dataGroupsCount]="income$ | async" title="Благосостояние"></app-bar-plot>
+    <app-bar-plot [dataGroupsCount]="income$ | async" plotTitle="Благосостояние"></app-bar-plot>
   </mat-grid-tile>
   <mat-grid-tile rowspan="2">
-    <app-density-plot [dataVector]="age$ | async" title="Распределение возраста" xAxisText="Кол-во лет">
+    <app-density-plot [dataVector]="age$ | async" plotTitle="Распределение возраста" xAxisText="Кол-во лет">
     </app-density-plot>
   </mat-grid-tile>
   <mat-grid-tile>
     <app-single-bar-plot [dataBiGroupCount]="isCity$ | async"
-      title="Соотношение горожан и жителей др. насел. пунктов, %">
+      plotTitle="Соотношение горожан и жителей др. насел. пунктов, %">
     </app-single-bar-plot>
   </mat-grid-tile>
   <mat-grid-tile rowspan="2">
-    <app-bar-plot [dataGroupsCount]="episodesAmount$ | async" title="Кол-во эпизодов (не более 5 шт) за 5 лет"
+    <app-bar-plot [dataGroupsCount]="episodesAmount$ | async" plotTitle="Кол-во эпизодов (не более 5 шт) за 5 лет"
       showGroupNames="true">
     </app-bar-plot>
   </mat-grid-tile>
 
   <!-- SECOND ROW -->
   <mat-grid-tile rowspan="2">
-    <app-bar-plot [dataGroupsCount]="education$ | async" title="Уровень образования">
+    <app-bar-plot [dataGroupsCount]="education$ | async" plotTitle="Уровень образования">
     </app-bar-plot>
   </mat-grid-tile>
   <mat-grid-tile rowspan="2">
-    <app-bar-plot [dataGroupsCount]="socialStatus$ | async" title="Социальный статус" showGroupNames="true">
+    <app-bar-plot [dataGroupsCount]="socialStatus$ | async" plotTitle="Социальный статус" showGroupNames="true">
     </app-bar-plot>
   </mat-grid-tile>
 </mat-grid-list>

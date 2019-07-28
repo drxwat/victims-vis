@@ -20,7 +20,7 @@ export class SingleBarPlotComponent extends HorizontalAxisPlotComponent {
   private _dataBiGroupCount: DataBiGroupCount;
   private legendText: Selection<SVGTextElement, unknown, null, undefined>;
 
-  @Input() title: string = '';
+  @Input() plotTitle: string = '';
   @Input() isAbsolute = false;
 
   @Input('dataBiGroupCount')
@@ -116,6 +116,8 @@ export class SingleBarPlotComponent extends HorizontalAxisPlotComponent {
       .on('mouseover', this.onMouseOver.bind(this));
 
     this.plotRoot.on('mouseleave', () => {
+      this.bottomBar.attr('fill', '#fff')
+      this.upperBar.attr('fill', '#20c997');
       this.showDefaultLegend();
     })
   }
@@ -128,7 +130,7 @@ export class SingleBarPlotComponent extends HorizontalAxisPlotComponent {
   }
 
   private drawTitle() {
-    let titleWidthFraqtion = this.title.length * 10 / this.innerSize.W;
+    let titleWidthFraqtion = this.plotTitle.length * 10 / this.innerSize.W;
     titleWidthFraqtion = titleWidthFraqtion < 0.9 ? titleWidthFraqtion : 0.9;
     this.chartRoot
       .append('text')
@@ -137,7 +139,7 @@ export class SingleBarPlotComponent extends HorizontalAxisPlotComponent {
       .attr('textLength', this.innerSize.W * titleWidthFraqtion)
       .attr('x', this.innerSize.W / 2)
       .attr('y', this.MARGIN_TOP)
-      .text(this.title)
+      .text(this.plotTitle)
   }
 
   private initLegend() {
@@ -151,6 +153,16 @@ export class SingleBarPlotComponent extends HorizontalAxisPlotComponent {
   }
 
   private onMouseOver(data: DataGroupCount, selectedIndex: number, nodes: SVGRectElement[]) {
+
+    const isUpperBar = !this.dataBiGroupCount.findIndex((d) => d[0] === data[0]);
+    if (isUpperBar) {
+      this.upperBar.attr('fill', '#00BFA5');
+      this.bottomBar.attr('fill', '#fff')
+    } else {
+      this.upperBar.attr('fill', '#20c997');
+      this.bottomBar.attr('fill', '#E0E0E0');
+    }
+
     this.legendText
       .style('font-style', 'normal')
       .text(data[0]);

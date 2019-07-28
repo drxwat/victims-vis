@@ -18,7 +18,7 @@ export class BarPlotComponent extends TwoAxisPlotComponent {
 
   private _dataGroupsCount: DataGroupsCount = [];
 
-  @Input() title: string = '';
+  @Input() plotTitle: string = '';
   @Input() showGroupNames = false;
 
   @Input('dataGroupsCount')
@@ -67,7 +67,7 @@ export class BarPlotComponent extends TwoAxisPlotComponent {
       this.drawPercentages(this.dataGroupsCount.map((d) => [d[0], 0]), 0);
       this.drawBars(this.dataGroupsCount, ANIMATION_DURATION);
       this.drawPercentages(this.dataGroupsCount, ANIMATION_DURATION);
-      // this.drawTitle();
+      this.drawTitle();
       if (!this.showGroupNames) {
         this.initLegend();
       }
@@ -154,7 +154,7 @@ export class BarPlotComponent extends TwoAxisPlotComponent {
   }
 
   private drawTitle() {
-    let titleWidthFraqtion = this.title.length * 10 / this.innerSize.W;
+    let titleWidthFraqtion = this.plotTitle.length * 10 / this.innerSize.W;
     titleWidthFraqtion = titleWidthFraqtion < 0.9 ? titleWidthFraqtion : 0.9;
 
     this.chartRoot
@@ -164,7 +164,7 @@ export class BarPlotComponent extends TwoAxisPlotComponent {
       .attr('textLength', this.innerSize.W * titleWidthFraqtion)
       .attr('x', this.innerSize.W / 2)
       .attr('y', 0)
-      .text(this.title);
+      .text(this.plotTitle);
   }
 
   private initLegend() {

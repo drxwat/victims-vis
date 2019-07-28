@@ -23,7 +23,7 @@ const ESTIMATED_AXIS_FRAQ = DEFAULT_ESTIMATED_AXIS_FRAQ * 1.5;
 })
 export class DensityPlotComponent extends TwoAxisPlotComponent {
 
-  @Input() title = '';
+  @Input() plotTitle = '';
   @Input() xAxisText = '';
   @Input() dataVector: DataVector = [];
 
@@ -140,7 +140,7 @@ export class DensityPlotComponent extends TwoAxisPlotComponent {
   }
 
   private drawTitle() {
-    let titleWidthFraqtion = this.title.length * 10 / this.innerSize.W;
+    let titleWidthFraqtion = this.plotTitle.length * 10 / this.innerSize.W;
     titleWidthFraqtion = titleWidthFraqtion < 0.9 ? titleWidthFraqtion : 0.9;
     this.chartRoot
       .append('text')
@@ -149,7 +149,7 @@ export class DensityPlotComponent extends TwoAxisPlotComponent {
       .attr('textLength', this.innerSize.W * titleWidthFraqtion)
       .attr('x', this.innerSize.W / 2)
       .attr('y', 0)
-      .text(this.title)
+      .text(this.plotTitle)
   }
 
   private initLegend() {

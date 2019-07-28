@@ -18,6 +18,7 @@ const BAR_HEIGHT_PART = 3; // 1/N
 export class SingleBarPlotComponent extends HorizontalAxisPlotComponent {
 
   private _dataBiGroupCount: DataBiGroupCount;
+  private legendText: Selection<SVGTextElement, unknown, null, undefined>;
 
   @Input() title: string = '';
   @Input() isAbsolute = false;
@@ -56,9 +57,10 @@ export class SingleBarPlotComponent extends HorizontalAxisPlotComponent {
       this.initPlot();
       this.initScale(this.dataBiGroupCount);
       this.drawAxis(this.scaleX);
-      this.initBars();
+      this.initBars(this.dataBiGroupCount[1]);
       this.drawUpperBar(this.dataBiGroupCount[0]);
       this.drawTitle();
+      this.initLegend();
     });
   }
 
@@ -88,7 +90,7 @@ export class SingleBarPlotComponent extends HorizontalAxisPlotComponent {
     return data[0][1] + data[1][1];
   }
 
-  private initBars() {
+  private initBars(singleData: DataGroupCount) {
     // bottom bar
     const barHeight = this.innerSize.H / BAR_HEIGHT_PART;
     const barY = this.innerSize.H - this.axisXSize.height - barHeight;
@@ -99,7 +101,9 @@ export class SingleBarPlotComponent extends HorizontalAxisPlotComponent {
       .attr('y', barY)
       .attr('width', this.size.W * (WIDTH_OCCUPATION - ESTIMATED_AXIS_FRAQ))
       .attr('height', barHeight)
-      .attr("fill", "#fff");
+      .attr("fill", "#fff")
+      .datum(singleData)
+      .on('mouseover', this.onMouseOver.bind(this));
 
     // upper bar
     this.upperBar = this.chartRoot
@@ -108,7 +112,12 @@ export class SingleBarPlotComponent extends HorizontalAxisPlotComponent {
       .attr('y', barY)
       .attr('width', 0)
       .attr('height', barHeight)
-      .attr("fill", "#20c997");
+      .attr("fill", "#20c997")
+      .on('mouseover', this.onMouseOver.bind(this));
+
+    this.plotRoot.on('mouseleave', () => {
+      this.showDefaultLegend();
+    })
   }
 
   private drawUpperBar(singleData: DataGroupCount) {
@@ -129,5 +138,27 @@ export class SingleBarPlotComponent extends HorizontalAxisPlotComponent {
       .attr('x', this.innerSize.W / 2)
       .attr('y', this.MARGIN_TOP)
       .text(this.title)
+  }
+
+  private initLegend() {
+    this.legendText = this.plotRoot
+      .append('text')
+      .attr('y', this.innerSize.H + this.axisXSize.height + (this.MARGIN_BOTTOM / 4))
+      .style('font-size', '85%')
+      .attr('x', this.innerSize.W / 2 + this.MARGIN_LEFT)
+      .attr('text-anchor', 'middle');
+    this.showDefaultLegend();
+  }
+
+  private onMouseOver(data: DataGroupCount, selectedIndex: number, nodes: SVGRectElement[]) {
+    this.legendText
+      .style('font-style', 'normal')
+      .text(data[0]);
+  }
+
+  private showDefaultLegend() {
+    this.legendText
+      .style('font-style', 'italic')
+      .text('Наведите на столбец, чтобы увидеть легенду');
   }
 }

@@ -62,7 +62,7 @@ export class VictimsDashboardComponent implements OnInit {
 
   isCity$ = this.data$.pipe(
     map(dataEntriesToGroupsCountMap('resp_place_is_city')),
-    map(groupsCountMapToDataBiGroupCount('Город', 'Не Город'))
+    map(groupsCountMapToDataBiGroupCount('Не Город', 'Город'))
   );
 
   education$ = this.data$.pipe(

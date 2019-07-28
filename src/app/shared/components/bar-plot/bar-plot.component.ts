@@ -40,7 +40,6 @@ export class BarPlotComponent extends TwoAxisPlotComponent {
   private scaleX: ScaleBand<string>;
   private scaleY: ScaleLinear<number, number>;
 
-  private barsGroup: Selection<SVGGElement, unknown, null, undefined>;
   private legendText: Selection<SVGTextElement, unknown, null, undefined>;
 
   private groupNamesMap: string[] = [];
@@ -60,7 +59,7 @@ export class BarPlotComponent extends TwoAxisPlotComponent {
       if (!this.showGroupNames) {
         this.axisX.selectAll('text').style('display', 'none');
       }
-      this.initBars(this.dataGroupsCount);
+      this.plotRoot.on('mouseleave', this.onMouseLeave.bind(this));
       this.drawBars(this.dataGroupsCount.map((d) => [d[0], 0]), 0);
       this.drawBars(this.dataGroupsCount, ANIMATION_DURATION);
       this.drawTitle();
@@ -95,31 +94,8 @@ export class BarPlotComponent extends TwoAxisPlotComponent {
       .range([this.size.H * (HEIGHT_OCCUPATION), 0])
   }
 
-  private initBars(data: DataGroupsCount) {
-    // creating bar with opacity to catch mouseleave correctly
-    // it should be wider & higher then bars in all dimentions
-    const xStart = this.scaleX(data[0][0]) as number;
-    const xEnd = this.scaleX.bandwidth() * (data.length + 1);
-    const margin = 20; // hack to catch mouseleave from broders of rect
-
-    this.chartRoot.append('rect')
-      .attr('x', xStart - margin)
-      .attr('y', 0 - margin)
-      .attr('width', xEnd + (2 * margin))
-      .attr('height', this.innerSize.H + (2 * margin))
-      .attr('fill', 'none')
-      .attr('opacity', '.2')
-      .attr('visibility', 'visible')
-      .attr('pointer-events', 'visible')
-    // .on('mouseleave', this.onMouseLeave.bind(this));
-
-    this.chartRoot.on('mouseleave', this.onMouseLeave.bind(this));
-
-    this.barsGroup = this.chartRoot.append('g');
-  }
-
   private drawBars(data: DataGroupsCount, duration = 0) {
-    let rectSelection = this.barsGroup.selectAll<SVGRectElement, unknown>("rect")
+    let rectSelection = this.chartRoot.selectAll<SVGRectElement, unknown>("rect")
       .data(data, (d: DataGroupCount) => d[0]);
 
     rectSelection.exit().remove();
@@ -172,8 +148,7 @@ export class BarPlotComponent extends TwoAxisPlotComponent {
       .attr('x', this.size.W / 2 + this.MARGIN_LEFT)
       .attr('text-anchor', 'middle')
       .style('font-style', 'italic')
-      .text('Наведите на столбец, чтобы увидеть легенду')
-
+      .text('Наведите на столбец, чтобы увидеть легенду');
   }
 
   private onMouseOver(data: DataGroupCount, selectedIndex: number, nodes: SVGRectElement[]) {
@@ -210,17 +185,10 @@ export class BarPlotComponent extends TwoAxisPlotComponent {
   }
 
   private onMouseLeave(data: DataGroupCount, selectedIndex: number, nodes: SVGRectElement[]) {
-    const mouseEvent = event as MouseEvent;
-    if (
-      mouseEvent &&
-      mouseEvent.relatedTarget &&
-      (mouseEvent.relatedTarget as Element).nodeName !== 'rect'
-    ) {
-      this.barsGroup.selectAll('rect').attr('opacity', 0.8);
-      if (!this.showGroupNames) {
-        this.legendText.selectAll('tspan').remove();
-        this.showDefaultLegend();
-      }
+    this.chartRoot.selectAll('rect').attr('opacity', 0.8);
+    if (!this.showGroupNames) {
+      this.legendText.selectAll('tspan').remove();
+      this.showDefaultLegend();
     }
   }
 }

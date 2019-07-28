@@ -16,8 +16,8 @@
     <mat-label>Место преступления</mat-label>
     <mat-select formControlName="crime_place_grouped">
       <mat-option *ngFor="let place of crimePlaces$ | async"
-        [disabled]="!isFilterHasValue('crime_place_grouped') && !(crimePlacesCount$ | async).has(place)"
-        [value]="place">
+        [disabled]="!isFilterHasValue('crime_place_grouped') && !(crimePlacesCount$ | async).has(place)" [value]="place"
+        [title]="place">
         {{place}}
       </mat-option>
     </mat-select>
@@ -33,31 +33,43 @@
     <app-single-bar-plot [dataBiGroupCount]="isMale$ | async" plotTitle="Соотношение мужчин и женщин, %">
     </app-single-bar-plot>
   </mat-grid-tile>
+
   <mat-grid-tile rowspan="2">
     <app-bar-plot [dataGroupsCount]="income$ | async" plotTitle="Благосостояние"></app-bar-plot>
   </mat-grid-tile>
-  <mat-grid-tile rowspan="2">
-    <app-density-plot [dataVector]="age$ | async" plotTitle="Распределение возраста" xAxisText="Кол-во лет">
-    </app-density-plot>
+
+  <mat-grid-tile>
+    <app-single-bar-plot [dataBiGroupCount]="is_reporting$ | async" plotTitle="Сообщила ли жертва в полицию">
+    </app-single-bar-plot>
   </mat-grid-tile>
+
   <mat-grid-tile>
     <app-single-bar-plot [dataBiGroupCount]="isCity$ | async"
       plotTitle="Соотношение горожан и жителей др. насел. пунктов, %">
     </app-single-bar-plot>
   </mat-grid-tile>
-  <mat-grid-tile rowspan="2">
-    <app-bar-plot [dataGroupsCount]="episodesAmount$ | async" plotTitle="Кол-во повторов преступления за 5 лет"
-      showGroupNames="true">
-    </app-bar-plot>
+
+  <mat-grid-tile>
+    <app-single-bar-plot [dataBiGroupCount]="is_crime_case_initiated$ | async"
+      plotTitle="Было ли возбуждено дело о преступлении">
+    </app-single-bar-plot>
   </mat-grid-tile>
 
-  <!-- SECOND ROW -->
   <mat-grid-tile rowspan="2">
     <app-bar-plot [dataGroupsCount]="education$ | async" plotTitle="Уровень образования">
     </app-bar-plot>
   </mat-grid-tile>
+
+  <!-- SECOND ROW -->
+
+  <mat-grid-tile rowspan="2">
+    <app-density-plot [dataVector]="age$ | async" plotTitle="Распределение возраста" xAxisText="Кол-во лет">
+    </app-density-plot>
+  </mat-grid-tile>
+
   <mat-grid-tile rowspan="2">
     <app-bar-plot [dataGroupsCount]="socialStatus$ | async" plotTitle="Социальный статус" showGroupNames="true">
     </app-bar-plot>
   </mat-grid-tile>
+
 </mat-grid-list>

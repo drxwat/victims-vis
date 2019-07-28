@@ -13,7 +13,8 @@ export interface DataEntity {
   resp_place_is_city: '0' | '1' | 'NA',
   resp_edu: string,
   resp_ses: string,
-  episodes_amount: string
+  victim_is_reporting: '0' | '1' | 'NA',
+  victim_is_crime_case_initiated: '0' | '1' | 'NA'
 }
 export declare type DataGroupCount = [string, number];
 export declare type DataGroupsCount = DataGroupCount[];

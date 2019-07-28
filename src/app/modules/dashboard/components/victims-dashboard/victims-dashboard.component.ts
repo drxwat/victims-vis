@@ -41,19 +41,19 @@ export class VictimsDashboardComponent implements OnInit {
     map(groupsCountMapToOrderedDataGroupCount(INCOME_ORDERED))
   );
 
-  episodesAmount$ = this.data$.pipe(
-    map(dataEntriesToGroupsCountMap('episodes_amount')),
-    map((m) => {
-      return Array.from(m).filter(tuple => {
-        const amount = +tuple[0];
-        if (isNaN(amount)) {
-          return false;
-        }
-        return amount > 0 && amount < 6;
-      });
-    }),
-    map((m) => m.sort((a, b) => (+a[0]) - (+b[0])))
-  );
+  // episodesAmount$ = this.data$.pipe(
+  //   map(dataEntriesToGroupsCountMap('episodes_amount')),
+  //   map((m) => {
+  //     return Array.from(m).filter(tuple => {
+  //       const amount = +tuple[0];
+  //       if (isNaN(amount)) {
+  //         return false;
+  //       }
+  //       return amount > 0 && amount < 6;
+  //     });
+  //   }),
+  //   map((m) => m.sort((a, b) => (+a[0]) - (+b[0])))
+  // );
 
   isMale$ = this.data$.pipe(
     map(dataEntriesToGroupsCountMap('resp_is_male')),
@@ -63,6 +63,16 @@ export class VictimsDashboardComponent implements OnInit {
   isCity$ = this.data$.pipe(
     map(dataEntriesToGroupsCountMap('resp_place_is_city')),
     map(groupsCountMapToDataBiGroupCount('Не Город', 'Город'))
+  );
+
+  is_reporting$ = this.data$.pipe(
+    map(dataEntriesToGroupsCountMap('victim_is_reporting')),
+    map(groupsCountMapToDataBiGroupCount('Не Сообщила', 'Сообщила'))
+  );
+
+  is_crime_case_initiated$ = this.data$.pipe(
+    map(dataEntriesToGroupsCountMap('victim_is_crime_case_initiated')),
+    map(groupsCountMapToDataBiGroupCount('Не Было', 'Было'))
   );
 
   education$ = this.data$.pipe(
@@ -126,7 +136,8 @@ export class VictimsDashboardComponent implements OnInit {
           resp_place_is_city: rawRow.resp_place_is_city as '0' | '1' | 'NA',
           resp_edu: rawRow.resp_edu as string,
           resp_ses: rawRow.resp_ses as string,
-          episodes_amount: rawRow.episodes_amount as string
+          victim_is_reporting: rawRow.victim_is_reporting as '0' | '1' | 'NA',
+          victim_is_crime_case_initiated: rawRow.victim_is_crime_case_initiated as '0' | '1' | 'NA'
         };
         return entityRow;
       });

@@ -28,17 +28,19 @@
 <mat-grid-list *ngIf="loaded$ | async" [cols]="gridColumns" rowHeight="4:1" gutterSize="25px">
   <!-- FIRST ROW -->
   <mat-grid-tile>
-    <app-single-bar-plot [dataBiGroupCount]="isMale$ | async" title="Соотношение мужчин и женщин"></app-single-bar-plot>
+    <app-single-bar-plot [dataBiGroupCount]="isMale$ | async" title="Соотношение мужчин и женщин, %">
+    </app-single-bar-plot>
   </mat-grid-tile>
   <mat-grid-tile rowspan="2">
     <app-bar-plot [dataGroupsCount]="income$ | async" title="Благосостояние"></app-bar-plot>
   </mat-grid-tile>
   <mat-grid-tile rowspan="2">
-    <app-density-plot [dataVector]="age$ | async" title="Распределение возраста">
+    <app-density-plot [dataVector]="age$ | async" title="Распределение возраста" xAxisText="Кол-во лет">
     </app-density-plot>
   </mat-grid-tile>
   <mat-grid-tile>
-    <app-single-bar-plot [dataBiGroupCount]="isCity$ | async" title="Соотношение горожан и жителей др. насел. пунктов">
+    <app-single-bar-plot [dataBiGroupCount]="isCity$ | async"
+      title="Соотношение горожан и жителей др. насел. пунктов, %">
     </app-single-bar-plot>
   </mat-grid-tile>
   <mat-grid-tile rowspan="2">

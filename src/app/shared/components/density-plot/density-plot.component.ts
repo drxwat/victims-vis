@@ -23,7 +23,8 @@ const ESTIMATED_AXIS_FRAQ = DEFAULT_ESTIMATED_AXIS_FRAQ * 1.5;
 })
 export class DensityPlotComponent extends TwoAxisPlotComponent {
 
-  @Input() title: string = '';
+  @Input() title = '';
+  @Input() xAxisText = '';
   @Input() dataVector: DataVector = [];
 
   private plotCurve: any;
@@ -76,6 +77,7 @@ export class DensityPlotComponent extends TwoAxisPlotComponent {
     this.initScaleY(this.density);
     this.drawAxises(this.scaleX, this.scaleY);
     this.initCurve();
+    this.initLegend();
   }
 
   private redrawCurve() {
@@ -148,6 +150,16 @@ export class DensityPlotComponent extends TwoAxisPlotComponent {
       .attr('x', this.innerSize.W / 2)
       .attr('y', 0)
       .text(this.title)
+  }
+
+  private initLegend() {
+    this.plotRoot
+      .append('text')
+      .attr('y', this.innerSize.H + this.axisXSize.height + (this.MARGIN_BOTTOM / 1.5))
+      .style('font-size', '85%')
+      .attr('x', this.innerSize.W / 2 + this.MARGIN_LEFT)
+      .attr('text-anchor', 'middle')
+      .text(this.xAxisText);
   }
 
   /** 
